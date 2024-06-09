@@ -1,0 +1,315 @@
+﻿@{
+    ViewData["Title"] = "Add";
+}
+
+@model BookKeeping.Repository.Dtos.Invoice
+
+
+
+
+
+<style>
+    .invoice td {
+        border: solid 1px;
+    }
+
+    .invoice th {
+        border: solid 1px;
+    }
+
+    .InvoiceDetail {
+        width: 100%;
+    }
+
+        .InvoiceDetail td {
+            border: none;
+        }
+
+        .InvoiceDetail th {
+            border: none;
+        }
+
+    .rowData {
+        width: 100%;
+    }
+
+</style>
+
+<h1>Add</h1>
+<div>
+    <table style="width:100%">
+        <tr>
+            <td>
+                <input type="file" id="fileUpload" />
+                <input type="button" class="btn btn-outline-dark" id="uploadCheck" value="匯入" />
+            </td>
+            <td style="text-align:right">
+                <input type="button" class="btn btn-primary" id="send" value="送出">
+            </td>
+        </tr>
+    </table>
+
+
+
+
+
+</div>
+
+<div id="main">
+    <div class="invoiceContent" style="width:100%;">
+        <hr>
+        <table class="invoice" style="width:100%;text-align:center;">
+            <tr>
+                @* 載具名稱、載具號碼 *@
+                <th>@Html.DisplayNameFor(m => m.Carrier_Name)</th>
+                <td>@Html.TextBoxFor(m => m.Carrier_Name, new { @class = "Carrier_Name" })</td>
+                <th>@Html.DisplayNameFor(m => m.Carrier_Number)</th>
+                <td>@Html.TextBoxFor(m => m.Carrier_Number, new { @class = "Carrier_Number" })</td>
+            </tr>
+
+            <tr>
+                @* 發票號碼、發票日期 *@
+                <th>@Html.DisplayNameFor(m => m.Invoice_Number)</th>
+                <td>@Html.TextBoxFor(m => m.Invoice_Number, new { @class = "Invoice_Number" })</td>
+                <th>@Html.DisplayNameFor(m => m.Date)</th>
+                <td>@Html.TextBoxFor(m => m.Date, new { @class = "Date", @type = "date" })</td>
+            </tr>
+
+            <tr>
+                @* 商店店名、商店統編 *@
+                <th>@Html.DisplayNameFor(m => m.Name_of_Seller)</th>
+                <td>@Html.TextBoxFor(m => m.Name_of_Seller, new { @class = "Name_of_Seller" })</td>
+                <th>@Html.DisplayNameFor(m => m.BAN_of_Seller)</th>
+                <td>@Html.TextBoxFor(m => m.BAN_of_Seller, new { @class = "BAN_of_Seller" })</td>
+            </tr>
+
+            <tr>
+                @* 總金額、發票狀態 *@
+                <th>@Html.DisplayNameFor(m => m.Amount)</th>
+                <td>@Html.TextBoxFor(m => m.Amount, new { @class = "Amount", @type = "number" })</td>
+                <th>@Html.DisplayNameFor(m => m.Invoice_Status)</th>
+                <td>@Html.TextBoxFor(m => m.Invoice_Status, new { @class = "Invoice_Status" })</td>
+            </tr>
+
+            <tr>
+                @* 發票明細 *@
+                <th>@Html.DisplayNameFor(m => m.InvoiceDetail)</th>
+                <td colspan="3">
+                    <table class="InvoiceDetail">
+                        <tr class="rowData">
+                            <th>@Html.DisplayNameFor(m => m.InvoiceDetail[0].Product_Name)</th>
+                            <td>@Html.TextBoxFor(m => m.InvoiceDetail[0].Product_Name, new { @class = "Product_Name" })</td>
+
+                            <th>@Html.DisplayNameFor(m => m.InvoiceDetail[0].Price)</th>
+                            <td>@Html.TextBoxFor(m => m.InvoiceDetail[0].Price, new { @class = "Price", @type = "number" })</td>
+
+                            <th>@Html.DisplayNameFor(m => m.InvoiceDetail[0].Category)</th>
+                            <td>@Html.DropDownListFor(m => m.InvoiceDetail[0].Category, (SelectList)ViewBag.Category, new { @class = "Category" })</td>
+
+                            <td>
+                                <a class="rowDataAdd btn btn-outline-dark">
+                                    <i class="fa-solid fa-plus"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <button type="button" class="btn btn-danger invoiceRemove" style="margin-top:5px">移除</button>
+    </div>
+</div>
+<hr>
+<input type="button" class="btn btn-warning" id="btn_AddInvoice" value="新增">
+
+
+<script>
+    $(function () {        
+
+        //新增主檔
+        $('#btn_AddInvoice').click(function () {
+            //取得html 附加至最下方
+            let html = $('.invoiceContent').first().prop('outerHTML');
+            $(html).appendTo('#main');
+
+            //明細列會把多行一起複製 把所有-號按一遍刪除(偷懶?)
+            $('#main').find('.invoiceContent').last().find('.rowDataRemove').click();
+        })
+
+        //加一行明細資料列
+        $('#main').on('click', '.rowDataAdd', function () {
+
+            //取得row html
+            let obj = $(this);
+            let rowData = $(obj).closest('.InvoiceDetail').find('tr').last().prop('outerHTML');
+
+            //附加至最下方
+            $(obj).closest('.InvoiceDetail').append(rowData);
+
+            //更換圖示
+            $(obj).find('svg').removeClass('fa-plus').addClass('fa-minus');
+            $(obj).removeClass('rowDataAdd').addClass('rowDataRemove');
+        })
+
+        //減一行明細資料列
+        $('#main').on('click', '.rowDataRemove', function () {
+            let rowData_Count = $(this).closest('.InvoiceDetail').find('tr').length;
+            if (rowData_Count > 1) {
+                $(this).closest('tr').remove();
+            }
+
+        })
+
+        //移除主檔
+        $('#main').on('click', '.invoiceRemove', function () {
+            if ($('.invoiceContent').length > 1) {
+                $(this).closest('.invoiceContent').remove();
+            }
+
+        })
+
+        //送出發票資料
+        $('#send').click(function () {
+
+            //發票總數
+            let Invoice_Count = $('.invoiceContent');
+
+            //最後要送出的資料
+            let data = {};
+
+            //逐張抓資料
+            for (let i = 0; i < Invoice_Count.length; i++) {
+
+                //主資料
+                let Carrier_Name = $(Invoice_Count[i]).find('.Carrier_Name').val();
+                let Carrier_Number = $(Invoice_Count[i]).find('.Carrier_Number').val();
+                let Date = $(Invoice_Count[i]).find('.Date').val();
+                let BAN_of_Seller = $(Invoice_Count[i]).find('.BAN_of_Seller').val();
+                let Name_of_Seller = $(Invoice_Count[i]).find('.Name_of_Seller').val();
+                let Invoice_Number = $(Invoice_Count[i]).find('.Invoice_Number').val();
+                let Amount = $(Invoice_Count[i]).find('.Amount').val();
+                let Invoice_Status = $(Invoice_Count[i]).find('.Invoice_Status').val();
+                let InvoiceDetail = [];
+
+                //明細資料
+                let Detail = $(Invoice_Count[i]).find('.InvoiceDetail').find('.rowData');
+
+                //從發票明細欄位逐列取得此筆發票所有明細
+                for (let j = 0; j < Detail.length; j++) {
+
+                    //目前列明細資料
+                    let rowDetail = {
+                        'Product_Name': $(Detail[j]).find('.Product_Name').val(),
+                        'Price': $(Detail[j]).find('.Price').val(),
+                        'Category': $(Detail[j]).find('.Category').val()
+                    }
+                    //加入主資料
+                    InvoiceDetail.push(rowDetail);
+                }
+
+                //組成資料
+                let mainData = {
+                    [`Invoices[${i}].Carrier_Name`]: Carrier_Name,
+                    [`Invoices[${i}].Carrier_Number`]: Carrier_Number,
+                    [`Invoices[${i}].Date`]: Date,
+                    [`Invoices[${i}].BAN_of_Seller`]: BAN_of_Seller,
+                    [`Invoices[${i}].Name_of_Seller`]: Name_of_Seller,
+                    [`Invoices[${i}].Invoice_Number`]: Invoice_Number,
+                    [`Invoices[${i}].Amount`]: Amount,
+                    [`Invoices[${i}].Invoice_Status`]: Invoice_Status,
+                    [`Invoices[${i}].InvoiceDetail`]: InvoiceDetail
+                }
+            }
+            Object.assign(data, mainData);
+
+            //console.log(data);
+
+            //送出
+            $.ajax({
+                type: 'post',
+                url: '@Url.Action("AddInvoice")',
+                data: data,
+                dataType: 'json',
+                success: function (response) {
+                    console.log(response);
+                }
+            })
+        })
+
+        //讀取發票資料檔案(CSV)
+        $('#uploadCheck').click(function () {
+
+            let data = new FormData();
+            let files = $('#fileUpload')[0].files;
+
+            //加入檔案
+            for (let i = 0; i < files.length; i++) {
+                data.append('files', files[i]);
+            }
+
+            //送出
+            $.ajax({
+                async: false,
+                type: 'post',
+                url: '@Url.Action("ReadFile")',
+                data: data,
+                dataType: 'json',
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    //資料塞進畫面
+                    if (response.length > 0) {
+                        console.log(response);
+
+                        //清除畫面資料
+                        $('.invoiceContent').slice(1).remove();
+                        //清除內容
+                        $('.invoiceContent').find('input').val('');
+                        //清除明細列
+                        $('.rowDataRemove').click();
+
+                        //產生新主檔
+                        for (let i = 0; i < response.length - 1; i++) {
+                            $('#btn_AddInvoice').click();
+                        }
+
+                        let invoice = $('.invoiceContent');
+
+                        for (let i = 0; i < response.length; i++) {
+
+                            //新增主檔
+                            $(invoice[i]).find('.Carrier_Name').val(response[i].carrier_Name);
+                            $(invoice[i]).find('.Carrier_Number').val(response[i].carrier_Number);
+                            $(invoice[i]).find('.Date').val(response[i].date.split('T')[0]);
+                            $(invoice[i]).find('.BAN_of_Seller').val(response[i].baN_of_Seller);
+                            $(invoice[i]).find('.Name_of_Seller').val(response[i].name_of_Seller);
+                            $(invoice[i]).find('.Invoice_Number').val(response[i].invoice_Number);
+                            $(invoice[i]).find('.Amount').val(response[i].amount);
+                            $(invoice[i]).find('.Invoice_Status').val(response[i].invoice_Status);
+
+                            //明細資料
+                            let DetailData = response[i].invoiceDetail;
+
+                            //產生明細行
+                            for (let j = 0; j < DetailData.length - 1; j++) {
+                                $(invoice[i]).find('.rowDataAdd').click();
+                            }
+
+                            //新增明細
+                            let Detail = $(invoice[i]).find('.rowData');
+
+                            for (let j = 0; j < DetailData.length; j++) {
+                                $(Detail[j]).find('.Product_Name').val(DetailData[j].product_Name)
+                                $(Detail[j]).find('.Price').val(DetailData[j].price)
+                                $(Detail[j]).find('.Category').val(DetailData[j].category)
+                            }
+                        }
+                    }
+                }
+            })
+        })
+    });
+
+</script>
+
+
