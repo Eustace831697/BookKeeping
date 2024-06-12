@@ -16,21 +16,15 @@ namespace BookKeeping.Repository.Implement
 {
     public class InvoiceRepository : IInvoiceRepository
     {
-        //SQL連線字串
+        
         private readonly string _ConnectionString;
-
-        //DI
+        
         public InvoiceRepository(string ConnectionString)
         {
             this._ConnectionString = ConnectionString;
         }
-
-        /// <summary>
-        /// 取得明細分類
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public List<InvoiceDetailCategory> getCategory()
+        
+        public List<InvoiceDetailCategory> GetCategory()
         {
             try
             {
@@ -38,7 +32,6 @@ namespace BookKeeping.Repository.Implement
                 {
                     conn.Open();
                     var Category = conn.Query<InvoiceDetailCategory>("SELECT [Category],[Category_Name] fROM Invoice_Detail_Category");
-
                     return Category.ToList();
                 }
             }
@@ -48,12 +41,8 @@ namespace BookKeeping.Repository.Implement
             }
         }
 
-        /// <summary>
-        /// 寫入發票資料
-        /// </summary>
-        /// <param name="Invoice"></param>
-        /// <returns></returns>
-        public string Insert(List<Invoice> Invoice)
+
+        public string Insert(List<Invoice> InvoiceGroup)
         {
             string rtn = "";
             try
@@ -62,80 +51,88 @@ namespace BookKeeping.Repository.Implement
                 {
                     using (var conn = new SqlConnection(_ConnectionString))
                     {
-                        conn.Open(); //連線
-                        foreach (var item in Invoice)
+                        conn.Open(); 
+                        foreach (Invoice invoice in InvoiceGroup)
                         {
-                            DynamicParameters para_Main = new DynamicParameters();
+                            Guid ID = Guid.NewGuid();
 
-                            //主資料參數
-                            para_Main.Add("@Carrier_Name", item.Carrier_Name, DbType.String, ParameterDirection.Input, 50);
-                            para_Main.Add("@Carrier_Number", item.Carrier_Number, DbType.String, ParameterDirection.Input, 30);
-                            para_Main.Add("@Date", item.Date, DbType.DateTime);
-                            para_Main.Add("@BAN_of_Seller", item.BAN_of_Seller, DbType.String, ParameterDirection.Input, 8);
-                            para_Main.Add("@Name_of_Seller", item.Name_of_Seller, DbType.String, ParameterDirection.Input, 50);
-                            para_Main.Add("@Invoice_Number", item.Invoice_Number, DbType.String, ParameterDirection.Input, 10);
-                            para_Main.Add("@Amount", item.Amount, DbType.Int32);
-                            para_Main.Add("@Invoice_Status", item.Invoice_Status, DbType.String, ParameterDirection.Input, 10);
+                            DynamicParameters mainParameters = CreateMaintParameters(ID, invoice);
+                            conn.Execute("Insert_Invoice", mainParameters, commandType: CommandType.StoredProcedure);
 
-                            //回傳參數
-                            para_Main.Add("@InvoiceID", dbType: DbType.String, direction: ParameterDirection.Output, size: 38);
-
-                            //寫入並回傳ID
-                            conn.Execute("Insert_Invoice", para_Main, commandType: CommandType.StoredProcedure);
-                            string ID = para_Main.Get<string>("@InvoiceID");
-
-                            //明細資料參數
-                            List<DynamicParameters> para_Detail = new List<DynamicParameters>();
-
-                            foreach (var Detail in item.InvoiceDetail)
-                            {
-                                DynamicParameters para = new DynamicParameters();
-                                para.Add("@Invoice_ID", ID, DbType.String);
-                                para.Add("@Product_Name", Detail.Product_Name, DbType.String, ParameterDirection.Input, 50);
-                                para.Add("@Price", Detail.Price, DbType.Int32);
-                                para.Add("@Category", Detail.Category, DbType.Int32);
-
-                                para_Detail.Add(para);
-                            }
-                            //寫入
-                            conn.Execute("Insert_Invoice_Detail", para_Detail, commandType: CommandType.StoredProcedure);
+                            List<DynamicParameters> detailParameters = CreateDetailtParameters(ID, invoice.InvoiceDetail);
+                            conn.Execute("Insert_Invoice_Detail", detailParameters, commandType: CommandType.StoredProcedure);
                         }
                     }
                     Transaction.Complete();
+                    return rtn;
                 }
             }
             catch (Exception ex)
             {
-                rtn = ex.ToString();
+                return ex.ToString();
             }
-            return rtn;
+        }
+
+        private DynamicParameters CreateMaintParameters(Guid ID, Invoice invoice)
+        {
+            DynamicParameters parameters = new DynamicParameters();
+
+            parameters.Add("@ID", ID, dbType: DbType.Guid, direction: ParameterDirection.Input, size: 38);
+            parameters.Add("@Carrier_Name", invoice.Carrier_Name, DbType.String, ParameterDirection.Input, 50);
+            parameters.Add("@Carrier_Number", invoice.Carrier_Number, DbType.String, ParameterDirection.Input, 30);
+            parameters.Add("@Date", invoice.Date, DbType.DateTime);
+            parameters.Add("@BAN_of_Seller", invoice.BAN_of_Seller, DbType.String, ParameterDirection.Input, 8);
+            parameters.Add("@Name_of_Seller", invoice.Name_of_Seller, DbType.String, ParameterDirection.Input, 50);
+            parameters.Add("@Invoice_Number", invoice.Invoice_Number, DbType.String, ParameterDirection.Input, 10);
+            parameters.Add("@Amount", invoice.Amount, DbType.Int32);
+            parameters.Add("@Invoice_Status", invoice.Invoice_Status, DbType.String, ParameterDirection.Input, 10);
+
+            return parameters;
+        }
+
+        private List<DynamicParameters> CreateDetailtParameters(Guid ID, List<InvoiceDetail> DetailGroup)
+        {
+            List<DynamicParameters> allDetailParameter = new List<DynamicParameters>();
+
+            foreach (var Detail in DetailGroup)
+            {
+                DynamicParameters Parameter = new DynamicParameters();
+
+                Parameter.Add("@Invoice_ID", ID, DbType.Guid);
+                Parameter.Add("@Product_Name", Detail.Product_Name, DbType.String, ParameterDirection.Input, 50);
+                Parameter.Add("@Price", Detail.Price, DbType.Int32);
+                Parameter.Add("@Category", Detail.Category, DbType.Int32);
+
+                allDetailParameter.Add(Parameter);
+            }
+            return allDetailParameter;
         }
 
         /// <summary>
         /// 取得所有紀錄 暫無條件
         /// </summary>
         /// <returns></returns>
-        public List<Invoice> getList()
+        public List<InvoiceData> GetList()
         {
+            List<InvoiceData> InvoiceDataList = new List<InvoiceData>();
+
             try
             {
                 //連線
                 using (SqlConnection conn = new SqlConnection(_ConnectionString))
                 {
                     conn.Open();
-                    //交易
-                    using (var Transaction = conn.BeginTransaction())
-                    {
-                        conn.Query<Invoice>
-                    }
+                    InvoiceDataList = conn.Query<InvoiceData>("[dbo].[Get_Invoice_Data]", commandType: CommandType.StoredProcedure).ToList();
 
+                    return InvoiceDataList;
                 }
-    
             }
             catch (Exception ex)
             {
-
+                string rtn = ex.ToString();
+                rtn.ToString();
             }
+            return InvoiceDataList;
         }
     }
 

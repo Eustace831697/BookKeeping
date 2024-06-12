@@ -11,6 +11,9 @@ namespace BookKeeping.Repository.Dtos
     public class InvoiceDetail
     {
         //發票明細的實體
+        [DisplayName("主檔GUID")]
+        public Guid Invoice_ID { get; set; }
+
         [DisplayName("品項名稱")]
         public string Product_Name { get; set; }
 

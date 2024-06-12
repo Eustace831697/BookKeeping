@@ -12,7 +12,7 @@ namespace BookKeeping.Repository.Dtos
     {
         //發票主檔的實體
 
-        public string ID { get; set; }
+        public Guid ID { get; set; }
 
         [DisplayName("載具名稱")]
         public string Carrier_Name { get; set; }

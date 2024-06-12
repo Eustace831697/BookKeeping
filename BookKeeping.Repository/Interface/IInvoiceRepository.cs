@@ -1,4 +1,5 @@
 ﻿using BookKeeping.Repository.Dtos;
+using Dapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +14,9 @@ namespace BookKeeping.Repository.Interface
         string Insert(List<Invoice> Invoice);
 
         //取得列表
-        List<Invoice> getList();
+        List<InvoiceData> GetList();
 
         //取得明細分類
-        List<InvoiceDetailCategory> getCategory();
+        List<InvoiceDetailCategory> GetCategory();  
     }
 }
