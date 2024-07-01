@@ -77,15 +77,15 @@
                                         <tr class="rowTitle">
                                             <th>@Html.DisplayNameFor(m => m[i].InvoiceDetail[0].Product_Name)</th>
                                             <th>@Html.DisplayNameFor(m => m[i].InvoiceDetail[0].Price)</th>
-                                            <th>@Html.DisplayNameFor(m => m[i].InvoiceDetail[0].Category)</th>
+                                            <th>@Html.DisplayNameFor(m => m[i].InvoiceDetail[0].CategoryName)</th>
                                         </tr>
 
                                         for (int j = 0; j < Model[i].InvoiceDetail.Count; j++)
                                         {
                                             <tr class="rowData">
                                                 <td>@Html.DisplayFor(m => m[i].InvoiceDetail[j].Product_Name, new { @class = "Product_Name" })</td>
-                                                <td>@Html.DisplayFor(m => m[i].InvoiceDetail[j].Price, new { @class = "Price", @type = "number" })</td>
-                                                <td>@Html.DropDownListFor(m => m[i].InvoiceDetail[j].Category, (SelectList)ViewBag.Category, new { @class = "Category", @disabled = "disabled" })</td>
+                                                <td>@Html.DisplayFor(m => m[i].InvoiceDetail[j].Price, new { @class = "Price", @type = "number" })</td>                                                
+                                                <td>@Html.DisplayFor(m => m[i].InvoiceDetail[j].CategoryName)</td>
                                                 <td></td>
                                             </tr>
                                         }

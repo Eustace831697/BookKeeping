@@ -58,8 +58,11 @@ namespace BookKeeping.Repository.Dtos
         public int Price { get; set; }
 
         //非必要
-        [DisplayName("分類")]
+        [DisplayName("分類編號")]
         public int Category { get; set; }
+
+        [DisplayName("分類")]
+        public string CategoryName { get; set; }
 
         [DisplayName("建立時間")]
         public DateTime DetailCreateDate { get; set; }
