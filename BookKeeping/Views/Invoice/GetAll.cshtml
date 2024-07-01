@@ -37,33 +37,33 @@
                     <tr>
                         @* 載具名稱、載具號碼 *@
                         <th>@Html.DisplayNameFor(m => m[i].Carrier_Name)</th>
-                        <td>@Html.DisplayFor(m => m[i].Carrier_Name, new { @class = "Carrier_Name" })</td>
+                        <td>@Html.DisplayFor(m => m[i].Carrier_Name)</td>
                         <th>@Html.DisplayNameFor(m => m[i].Carrier_Number)</th>
-                        <td>@Html.DisplayFor(m => m[i].Carrier_Number, new { @class = "Carrier_Number" })</td>
+                        <td>@Html.DisplayFor(m => m[i].Carrier_Number)</td>
                     </tr>
 
                     <tr>
                         @* 發票號碼、發票日期 *@
                         <th>@Html.DisplayNameFor(m => m[i].Invoice_Number)</th>
-                        <td>@Html.DisplayFor(m => m[i].Invoice_Number, new { @class = "Invoice_Number" })</td>
+                        <td>@Html.DisplayFor(m => m[i].Invoice_Number)</td>
                         <th>@Html.DisplayNameFor(m => m[i].Date)</th>
-                        <td>@Html.DisplayFor(m => m[i].Date, new { @class = "Date", @type = "date" })</td>
+                        <td>@Html.DisplayFor(m => m[i].DateFormat)</td>
                     </tr>
 
                     <tr>
                         @* 商店店名、商店統編 *@
                         <th>@Html.DisplayNameFor(m => m[i].Name_of_Seller)</th>
-                        <td>@Html.DisplayFor(m => m[i].Name_of_Seller, new { @class = "Name_of_Seller" })</td>
+                        <td>@Html.DisplayFor(m => m[i].Name_of_Seller)</td>
                         <th>@Html.DisplayNameFor(m => m[i].BAN_of_Seller)</th>
-                        <td>@Html.DisplayFor(m => m[i].BAN_of_Seller, new { @class = "BAN_of_Seller" })</td>
+                        <td>@Html.DisplayFor(m => m[i].BAN_of_Seller)</td>
                     </tr>
 
                     <tr>
                         @* 總金額、發票狀態 *@
                         <th>@Html.DisplayNameFor(m => m[i].Amount)</th>
-                        <td>@Html.DisplayFor(m => m[i].Amount, new { @class = "Amount", @type = "number" })</td>
+                        <td>@Html.DisplayFor(m => m[i].Amount)</td>
                         <th>@Html.DisplayNameFor(m => m[i].Invoice_Status)</th>
-                        <td>@Html.DisplayFor(m => m[i].Invoice_Status, new { @class = "Invoice_Status" })</td>
+                        <td>@Html.DisplayFor(m => m[i].Invoice_Status)</td>
                     </tr>
 
                     <tr>
@@ -83,8 +83,8 @@
                                         for (int j = 0; j < Model[i].InvoiceDetail.Count; j++)
                                         {
                                             <tr class="rowData">
-                                                <td>@Html.DisplayFor(m => m[i].InvoiceDetail[j].Product_Name, new { @class = "Product_Name" })</td>
-                                                <td>@Html.DisplayFor(m => m[i].InvoiceDetail[j].Price, new { @class = "Price", @type = "number" })</td>                                                
+                                                <td>@Html.DisplayFor(m => m[i].InvoiceDetail[j].Product_Name)</td>
+                                                <td>@Html.DisplayFor(m => m[i].InvoiceDetail[j].Price)</td>                                                
                                                 <td>@Html.DisplayFor(m => m[i].InvoiceDetail[j].CategoryName)</td>
                                                 <td></td>
                                             </tr>
@@ -94,9 +94,7 @@
                             </table>
                         </td>
                     </tr>
-
-                </table>
-                @*<button type="button" class="btn btn-danger invoiceRemove" style="margin-top:5px">移除</button>*@
+                </table>                
             </div>
         }
     }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace BookKeeping.Repository.Dtos
 {
     public class Invoice
-    {      
+    {
         public Guid ID { get; set; }
 
         [DisplayName("載具名稱")]
@@ -20,6 +20,14 @@ namespace BookKeeping.Repository.Dtos
 
         [DisplayName("發票日期")]
         public DateTime Date { get; set; }
+
+        public string DateFormat
+        {
+            get
+            {
+                return this.Date.ToString("yyyy-MM-dd");
+            }
+        }
 
         [DisplayName("商店統編")]
         public string BAN_of_Seller { get; set; }
