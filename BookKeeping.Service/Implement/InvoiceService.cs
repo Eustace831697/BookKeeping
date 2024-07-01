@@ -112,15 +112,58 @@ namespace BookKeeping.Service.Implement
             List<SelectListItem> selectListItems = new List<SelectListItem>();
 
             //取得分類
-            var CategoryList = _invoiceRepository.getCategory();
-            
+            var CategoryList = _invoiceRepository.GetCategory();
+
             //將各分類加入下拉選項
             foreach (var item in CategoryList)
             {
                 selectListItems.Add(new SelectListItem() { Text = item.Category_Name, Value = item.Category.ToString() });
-            }           
-
+            }
             return selectListItems;
+        }
+
+        /// <summary>
+        /// 取得資料並加入model
+        /// </summary>
+        /// <returns></returns>
+        public List<Invoice> GetAll()
+        {
+            //取得資料
+            List<InvoiceData> invoiceData = _invoiceRepository.GetList();
+
+            //建立model
+            List<Invoice> model = new List<Invoice>();
+
+            //加入model
+            var main = invoiceData.GroupBy(x => x.ID).Select(group=>group.First()).ToList();
+            foreach (var i in main)
+            {
+                //主檔資料
+                Invoice data = new Invoice();
+                data.ID = i.ID;
+                data.Carrier_Name = i.Carrier_Name;
+                data.Carrier_Number = i.Carrier_Number;
+                data.Date = i.Date;
+                data.BAN_of_Seller = i.BAN_of_Seller;
+                data.Name_of_Seller = i.Name_of_Seller;
+                data.Invoice_Number = i.Invoice_Number;
+                data.Amount = i.Amount;
+                data.Invoice_Status = i.Invoice_Status;
+                data.CreateDate = i.InvoiceCreateDate;
+
+                //主檔的明細資料
+                var detail = invoiceData.Where(x => x.Invoice_ID == i.ID).ToList();
+                List<InvoiceDetail> invoiceDetail = new List<InvoiceDetail>();
+
+                foreach (var x in detail)
+                {                    
+                    invoiceDetail.Add(new InvoiceDetail() { Product_Name = x.Product_Name, Price = x.Price, Category = x.Category });                
+                }
+                data.InvoiceDetail = invoiceDetail;
+
+                model.Add(data);
+            }
+            return model;
         }
     }
 }

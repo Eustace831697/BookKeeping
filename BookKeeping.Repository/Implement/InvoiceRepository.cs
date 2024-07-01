@@ -16,31 +16,12 @@ namespace BookKeeping.Repository.Implement
 {
     public class InvoiceRepository : IInvoiceRepository
     {
-        
         private readonly string _ConnectionString;
-        
+
         public InvoiceRepository(string ConnectionString)
         {
             this._ConnectionString = ConnectionString;
         }
-        
-        public List<InvoiceDetailCategory> GetCategory()
-        {
-            try
-            {
-                using (var conn = new SqlConnection(_ConnectionString))
-                {
-                    conn.Open();
-                    var Category = conn.Query<InvoiceDetailCategory>("SELECT [Category],[Category_Name] fROM Invoice_Detail_Category");
-                    return Category.ToList();
-                }
-            }
-            catch (Exception ex)
-            {
-                return new List<InvoiceDetailCategory>();
-            }
-        }
-
 
         public string Insert(List<Invoice> InvoiceGroup)
         {
@@ -51,17 +32,18 @@ namespace BookKeeping.Repository.Implement
                 {
                     using (var conn = new SqlConnection(_ConnectionString))
                     {
-                        conn.Open(); 
+                        conn.Open();
+                        List<DynamicParameters> allMainParameters = new List<DynamicParameters>();
+                        List<DynamicParameters> allDetailParameters = new List<DynamicParameters>();
+
                         foreach (Invoice invoice in InvoiceGroup)
                         {
                             Guid ID = Guid.NewGuid();
-
-                            DynamicParameters mainParameters = CreateMaintParameters(ID, invoice);
-                            conn.Execute("Insert_Invoice", mainParameters, commandType: CommandType.StoredProcedure);
-
-                            List<DynamicParameters> detailParameters = CreateDetailtParameters(ID, invoice.InvoiceDetail);
-                            conn.Execute("Insert_Invoice_Detail", detailParameters, commandType: CommandType.StoredProcedure);
+                            allMainParameters.Add(CreateMaintParameters(ID, invoice));
+                            allDetailParameters.AddRange(CreateDetailtParameters(ID, invoice.InvoiceDetail));
                         }
+                        conn.Execute("Insert_Invoice", allMainParameters, commandType: CommandType.StoredProcedure);
+                        conn.Execute("Insert_Invoice_Detail", allDetailParameters, commandType: CommandType.StoredProcedure);
                     }
                     Transaction.Complete();
                     return rtn;
@@ -107,6 +89,26 @@ namespace BookKeeping.Repository.Implement
             }
             return allDetailParameter;
         }
+
+        public List<InvoiceDetailCategory> GetCategory()
+        {
+            try
+            {
+                using (var conn = new SqlConnection(_ConnectionString))
+                {
+                    conn.Open();
+                    var Category = conn.Query<InvoiceDetailCategory>("SELECT [Category],[Category_Name] fROM Invoice_Detail_Category");
+                    return Category.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                return new List<InvoiceDetailCategory>();
+            }
+        }
+
+
+
 
         /// <summary>
         /// 取得所有紀錄 暫無條件
