@@ -109,16 +109,16 @@ namespace BookKeeping.Service.Implement
         /// <exception cref="NotImplementedException"></exception>
         public List<SelectListItem> getCategory()
         {
-            List<SelectListItem> selectListItems = new List<SelectListItem>();
-
             //取得分類
             var CategoryList = _invoiceRepository.GetCategory();
 
             //將各分類加入下拉選項
+            List<SelectListItem> selectListItems = new List<SelectListItem>();            
             foreach (var item in CategoryList)
             {
                 selectListItems.Add(new SelectListItem() { Text = item.Category_Name, Value = item.Category.ToString() });
             }
+
             return selectListItems;
         }
 
@@ -157,7 +157,7 @@ namespace BookKeeping.Service.Implement
 
                 foreach (var x in detail)
                 {                    
-                    invoiceDetail.Add(new InvoiceDetail() { Product_Name = x.Product_Name, Price = x.Price, Category = x.Category });                
+                    invoiceDetail.Add(new InvoiceDetail() { Product_Name = x.Product_Name, Price = x.Price, Category = x.Category,CategoryName=x.CategoryName });                
                 }
                 data.InvoiceDetail = invoiceDetail;
 

@@ -16,16 +16,8 @@ namespace BookKeeping.Controllers
         {
             this._invoiceService = invoiceService;
         }
-
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        /// <summary>
-        /// 發票匯入頁面
-        /// </summary>
-        /// <returns></returns>
+ 
+        //發票匯入頁面
         public IActionResult Add()
         {     
             //取得明細分類列表
@@ -37,11 +29,7 @@ namespace BookKeeping.Controllers
             return View();
         }
 
-        /// <summary>
-        /// 實際儲存發票資料功能
-        /// </summary>
-        /// <param name="Invoices"></param>
-        /// <returns></returns>
+        //call Api儲存發票
         [HttpPost("AddInvoice")]
         public IActionResult AddInvoice(List<Invoice> Invoices)
         {
@@ -53,11 +41,8 @@ namespace BookKeeping.Controllers
             }
             return Ok();
         }
-
-        /// <summary>
-        /// 讀取CSV檔案
-        /// </summary>
-        /// <returns></returns>
+        
+        //Add頁面讀取CSV檔案        
         [HttpPost("ReadFile")]
         public IActionResult ReadFile(IFormFileCollection files)
         {
@@ -67,19 +52,13 @@ namespace BookKeeping.Controllers
             return Json(invoices);
         }
 
-        /// <summary>
-        /// 檢視列表
-        /// </summary>
-        /// <returns></returns>
+        //取得全部資料
         public IActionResult GetAll()
         {
             List<Invoice> model= _invoiceService.GetAll();
 
             //取得明細分類列表
-            var CategoryList = _invoiceService.getCategory();
-
-            //組成SelectList傳至View
-            ViewBag.Category = new SelectList(CategoryList, "Value", "Text", 0);
+            var CategoryList = _invoiceService.getCategory();            
 
             return View(model);
         }
