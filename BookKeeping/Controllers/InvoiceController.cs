@@ -63,15 +63,25 @@ namespace BookKeeping.Controllers
         {
             //讀取CSV的方法
             List<Invoice> invoices = _invoiceService.ReadCSV(files);
-
+            
             return Json(invoices);
         }
 
-
-        public IActionResult GetList()
+        /// <summary>
+        /// 檢視列表
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult GetAll()
         {
+            List<Invoice> model= _invoiceService.GetAll();
 
-            return View();
+            //取得明細分類列表
+            var CategoryList = _invoiceService.getCategory();
+
+            //組成SelectList傳至View
+            ViewBag.Category = new SelectList(CategoryList, "Value", "Text", 0);
+
+            return View(model);
         }
 
         public IActionResult Edit()

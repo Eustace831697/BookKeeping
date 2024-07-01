@@ -24,7 +24,10 @@ namespace BookKeeping.Service.Interface
         //刪除整張發票
         int Delete();
 
-        //讀取每月消費紀錄
+        //取得發票資訊
+        List<Invoice> GetAll();
+
+        //讀取每月紀錄
         List<Invoice> ReadCSV(IFormFileCollection files);
 
         //取得發票明細分類
