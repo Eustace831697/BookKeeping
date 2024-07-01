@@ -124,7 +124,7 @@
 
 
 <script>
-    $(function () {        
+    $(function () {
 
         //新增主檔
         $('#btn_AddInvoice').click(function () {
@@ -171,6 +171,7 @@
         //送出發票資料
         $('#send').click(function () {
 
+            console.log('有觸發嗎');
             //發票總數
             let Invoice_Count = $('.invoiceContent');
 
@@ -219,19 +220,23 @@
                     [`Invoices[${i}].Invoice_Status`]: Invoice_Status,
                     [`Invoices[${i}].InvoiceDetail`]: InvoiceDetail
                 }
+                Object.assign(data, mainData);
             }
-            Object.assign(data, mainData);
 
-            //console.log(data);
+            console.log(data);
 
             //送出
             $.ajax({
+                async: false,
                 type: 'post',
                 url: '@Url.Action("AddInvoice")',
                 data: data,
-                dataType: 'json',
+                dataType: 'text',
                 success: function (response) {
+                    console.log('有進success嗎')
                     console.log(response);
+                    alert("匯入完成");
+                    location.href = '@Url.Action("GetAll")';                    
                 }
             })
         })
