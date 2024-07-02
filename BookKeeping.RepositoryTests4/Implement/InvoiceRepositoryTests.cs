@@ -15,18 +15,16 @@ namespace BookKeeping.Repository.Implement.Tests
     [TestClass()]
     public class InvoiceRepositoryTests
     {
-        //private readonly IInvoiceRepository _invoiceRepository;
+        private readonly IInvoiceRepository _invoiceRepository;
 
-        //public InvoiceRepositoryTests(IInvoiceRepository invoiceRepository)
-        //{
-        //    this._invoiceRepository = invoiceRepository;
-        //}
+        public InvoiceRepositoryTests(IInvoiceRepository invoiceRepository)
+        {
+            this._invoiceRepository = invoiceRepository;
+        }
 
         [TestMethod()]
         public void InsertTest()
         {
-            var InvoiceRepository = new InvoiceRepository("Server=.;Database=BookKeeping;User Id=bookkeepinguser;Password=ZAQ!2wsx;Trusted_Connection=True;");
-
             List<Invoice> invoiceGroup = new List<Invoice>();
 
             invoiceGroup.Add(new Invoice
@@ -61,7 +59,7 @@ namespace BookKeeping.Repository.Implement.Tests
                 }
             });
 
-            string result = InvoiceRepository.Insert(invoiceGroup);
+            string result = _invoiceRepository.Insert(invoiceGroup);
 
             Assert.AreEqual("", result);
         }
