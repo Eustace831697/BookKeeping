@@ -9,13 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-//SqlConnection
-//builder.Services.AddScoped<SqlConnection>(sp =>
-//{
-//    var configuration = sp.GetRequiredService<IConfiguration>();
-//    var connectionString = configuration.GetConnectionString("DefaultConnection");
-//    return new SqlConnection(connectionString);
-//});
 builder.Services.AddScoped<IInvoiceRepository>(sp =>
 {
     var configuration = sp.GetRequiredService<IConfiguration>();
@@ -23,7 +16,6 @@ builder.Services.AddScoped<IInvoiceRepository>(sp =>
     return new InvoiceRepository(connectionString);
 });
 
-//builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 
 var app = builder.Build();
