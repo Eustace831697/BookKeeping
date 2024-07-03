@@ -2,7 +2,7 @@ using BookKeeping.Repository.Implement;
 using BookKeeping.Repository.Interface;
 using BookKeeping.Service.Implement;
 using BookKeeping.Service.Interface;
-using System.Data.SqlClient;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
