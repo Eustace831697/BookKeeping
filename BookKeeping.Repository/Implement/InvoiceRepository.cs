@@ -33,13 +33,11 @@ namespace BookKeeping.Repository.Implement
                     using (var conn = new SqlConnection(_ConnectionString))
                     {
                         conn.Open();
+
                         InsertParameter insertParameter = new InsertParameter(InvoiceGroup);
 
-                        List<DynamicParameters> MainParameters = insertParameter.GetMainParameters();
-                        List<DynamicParameters> DetailParameters = insertParameter.GetDetailtParameters();
-
-                        conn.Execute("Insert_Invoice", MainParameters, commandType: CommandType.StoredProcedure);
-                        conn.Execute("Insert_Invoice_Detail", DetailParameters, commandType: CommandType.StoredProcedure);
+                        conn.Execute("Insert_Invoice", insertParameter.MainParameters, commandType: CommandType.StoredProcedure);
+                        conn.Execute("Insert_Invoice_Detail", insertParameter.DetailParameters, commandType: CommandType.StoredProcedure);
                     }
                     Transaction.Complete();
                     return rtn;

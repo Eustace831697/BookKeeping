@@ -10,8 +10,8 @@ namespace BookKeeping.Repository.Interface
 {
     public interface IInsertParameter
     {
-        List<DynamicParameters> GetMainParameters();
+        List<DynamicParameters> MainParameters { get; }
 
-        List<DynamicParameters> GetDetailtParameters();
+        List<DynamicParameters> DetailParameters { get; }
     }
 }
