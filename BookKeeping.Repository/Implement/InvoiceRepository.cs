@@ -25,7 +25,7 @@ namespace BookKeeping.Repository.Implement
 
         public string Insert(List<Invoice> InvoiceGroup)
         {
-            string rtn = "";
+            string rtn = null;
             try
             {
                 using (var Transaction = new TransactionScope())
