@@ -22,7 +22,7 @@ namespace BookKeeping.Repository.Implement
         {
             this._ConnectionString = ConnectionString;
         }
-
+        
         public string Insert(List<Invoice> InvoiceGroup)
         {
             string rtn = null;            
@@ -33,17 +33,13 @@ namespace BookKeeping.Repository.Implement
                     using (var conn = new SqlConnection(_ConnectionString))
                     {
                         conn.Open();
-                        List<DynamicParameters> allMainParameters = new List<DynamicParameters>();
-                        List<DynamicParameters> allDetailParameters = new List<DynamicParameters>();
+                        InsertParameter insertParameter = new InsertParameter(InvoiceGroup);
 
-                        foreach (Invoice invoice in InvoiceGroup)
-                        {
-                            Guid ID = Guid.NewGuid();
-                            allMainParameters.Add(CreateMaintParameters(ID, invoice));
-                            allDetailParameters.AddRange(CreateDetailtParameters(ID, invoice.InvoiceDetail));
-                        }
-                        conn.Execute("Insert_Invoice", allMainParameters, commandType: CommandType.StoredProcedure);
-                        conn.Execute("Insert_Invoice_Detail", allDetailParameters, commandType: CommandType.StoredProcedure);
+                        List<DynamicParameters> MainParameters = insertParameter.GetMainParameters();
+                        List<DynamicParameters> DetailParameters = insertParameter.GetDetailtParameters();
+
+                        conn.Execute("Insert_Invoice", MainParameters, commandType: CommandType.StoredProcedure);
+                        conn.Execute("Insert_Invoice_Detail", DetailParameters, commandType: CommandType.StoredProcedure);
                     }
                     Transaction.Complete();
                     return rtn;
@@ -53,41 +49,6 @@ namespace BookKeeping.Repository.Implement
             {
                 return ex.ToString();
             }
-        }
-
-        private DynamicParameters CreateMaintParameters(Guid ID, Invoice invoice)
-        {
-            DynamicParameters parameters = new DynamicParameters();
-
-            parameters.Add("@ID", ID, dbType: DbType.Guid, direction: ParameterDirection.Input, size: 38);
-            parameters.Add("@Carrier_Name", invoice.Carrier_Name, DbType.String, ParameterDirection.Input, 50);
-            parameters.Add("@Carrier_Number", invoice.Carrier_Number, DbType.String, ParameterDirection.Input, 30);
-            parameters.Add("@Date", invoice.Date, DbType.DateTime);
-            parameters.Add("@BAN_of_Seller", invoice.BAN_of_Seller, DbType.String, ParameterDirection.Input, 8);
-            parameters.Add("@Name_of_Seller", invoice.Name_of_Seller, DbType.String, ParameterDirection.Input, 50);
-            parameters.Add("@Invoice_Number", invoice.Invoice_Number, DbType.String, ParameterDirection.Input, 10);
-            parameters.Add("@Amount", invoice.Amount, DbType.Int32);
-            parameters.Add("@Invoice_Status", invoice.Invoice_Status, DbType.String, ParameterDirection.Input, 10);
-
-            return parameters;
-        }
-
-        private List<DynamicParameters> CreateDetailtParameters(Guid ID, List<InvoiceDetail> DetailGroup)
-        {
-            List<DynamicParameters> allDetailParameter = new List<DynamicParameters>();
-
-            foreach (var Detail in DetailGroup)
-            {
-                DynamicParameters Parameter = new DynamicParameters();
-
-                Parameter.Add("@Invoice_ID", ID, DbType.Guid);
-                Parameter.Add("@Product_Name", Detail.Product_Name, DbType.String, ParameterDirection.Input, 50);
-                Parameter.Add("@Price", Detail.Price, DbType.Int32);
-                Parameter.Add("@Category", Detail.Category, DbType.Int32);
-
-                allDetailParameter.Add(Parameter);
-            }
-            return allDetailParameter;
         }
 
         public List<InvoiceDetailCategory> GetCategory()
@@ -106,12 +67,7 @@ namespace BookKeeping.Repository.Implement
                 return new List<InvoiceDetailCategory>();
             }
         }
-
-
-
-
-
-        //取得所有紀錄 暫無條件
+        
         public List<InvoiceData> GetAll()
         {
             List<InvoiceData> InvoiceDataList = new List<InvoiceData>();

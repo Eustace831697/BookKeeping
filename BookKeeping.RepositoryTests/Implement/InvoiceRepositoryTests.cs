@@ -27,7 +27,7 @@ namespace BookKeeping.Repository.Implement.Tests
         public void Insert_Test()
         {
             InvoiceRepository _invoiceRepository = new InvoiceRepository(_ConnectionString);
-
+            
             List<Invoice> invoiceGroup = new List<Invoice>();
             invoiceGroup.Add(new Invoice
             {
@@ -63,6 +63,7 @@ namespace BookKeeping.Repository.Implement.Tests
             string result = _invoiceRepository.Insert(invoiceGroup);
             
             Assert.IsNull(result);
+    
         }
 
         [TestMethod()]
