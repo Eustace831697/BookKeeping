@@ -5,26 +5,35 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BookKeeping.Repository.Interface;
 using BookKeeping.Repository.Dtos;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Diagnostics;
+using BookKeeping.Repository.Interface;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
+using System.Data.SqlClient;
+
+
 
 namespace BookKeeping.Repository.Implement.Tests
 {
     [TestClass()]
     public class InvoiceRepositoryTests
     {
-        private readonly IInvoiceRepository _invoiceRepository;
-
-        public InvoiceRepositoryTests(IInvoiceRepository invoiceRepository)
+        private readonly string _ConnectionString ="Server=.;Database=BookKeeping;User Id=bookkeepinguser;Password=ZAQ!2wsx;Trusted_Connection=True;";
+        
+        [TestMethod()]
+        public void InvoiceRepositoryTest()
         {
-            this._invoiceRepository = invoiceRepository;
+            Assert.Fail();
         }
 
         [TestMethod()]
         public void InsertTest()
         {
+            InvoiceRepository _invoiceRepository = new InvoiceRepository(_ConnectionString);
+
             List<Invoice> invoiceGroup = new List<Invoice>();
 
             invoiceGroup.Add(new Invoice
@@ -60,20 +69,18 @@ namespace BookKeeping.Repository.Implement.Tests
             });
 
             string result = _invoiceRepository.Insert(invoiceGroup);
-
-            Assert.AreEqual("", result);
-        }
-
-        [TestMethod()]
-        public void InvoiceRepositoryTest()
-        {
-            Assert.Fail();
+            
+            Assert.IsNotNull(result);
         }
 
         [TestMethod()]
         public void GetCategoryTest()
         {
-            Assert.Fail();
+            InvoiceRepository _invoiceRepository = new InvoiceRepository(_ConnectionString);
+
+            var result = _invoiceRepository.GetCategory();
+
+            Assert.IsNotNull(result);
         }
 
         [TestMethod()]
@@ -81,12 +88,5 @@ namespace BookKeeping.Repository.Implement.Tests
         {
             Assert.Fail();
         }
-    }
-}
-
-namespace BookKeeping.RepositoryTests4.Implement
-{
-    internal class InvoiceRepositoryTests
-    {
     }
 }

@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BookKeeping.Repository\BookKeeping.Repository.csproj" />
+    <ProjectReference Include="..\BookKeeping\BookKeeping.csproj" />
   </ItemGroup>
 
   <ItemGroup>
