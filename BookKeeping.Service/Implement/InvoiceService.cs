@@ -129,7 +129,7 @@ namespace BookKeeping.Service.Implement
         public List<Invoice> GetAll()
         {
             //取得資料
-            List<InvoiceData> invoiceData = _invoiceRepository.GetList();
+            List<InvoiceData> invoiceData = _invoiceRepository.GetAll();
 
             //建立model
             List<Invoice> model = new List<Invoice>();
