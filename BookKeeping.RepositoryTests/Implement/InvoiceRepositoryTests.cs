@@ -21,21 +21,14 @@ namespace BookKeeping.Repository.Implement.Tests
     [TestClass()]
     public class InvoiceRepositoryTests
     {
-        private readonly string _ConnectionString ="Server=.;Database=BookKeeping;User Id=bookkeepinguser;Password=ZAQ!2wsx;Trusted_Connection=True;";
+        private readonly string _ConnectionString = "Server=.;Database=BookKeeping;User Id=bookkeepinguser;Password=ZAQ!2wsx;Trusted_Connection=True;";
         
         [TestMethod()]
-        public void InvoiceRepositoryTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void InsertTest()
+        public void Insert_Test()
         {
             InvoiceRepository _invoiceRepository = new InvoiceRepository(_ConnectionString);
 
             List<Invoice> invoiceGroup = new List<Invoice>();
-
             invoiceGroup.Add(new Invoice
             {
                 Carrier_Name = "手機條碼",
@@ -51,7 +44,6 @@ namespace BookKeeping.Repository.Implement.Tests
                      new InvoiceDetail { Price=55, Product_Name = "拿鐵冰咖啡(大)" },
                 }
             });
-
             invoiceGroup.Add(new Invoice
             {
                 Carrier_Name = "手機條碼",
@@ -70,11 +62,11 @@ namespace BookKeeping.Repository.Implement.Tests
 
             string result = _invoiceRepository.Insert(invoiceGroup);
             
-            Assert.IsNotNull(result);
+            Assert.IsNull(result);
         }
 
         [TestMethod()]
-        public void GetCategoryTest()
+        public void GetCategory_Test()
         {
             InvoiceRepository _invoiceRepository = new InvoiceRepository(_ConnectionString);
 
@@ -82,11 +74,15 @@ namespace BookKeeping.Repository.Implement.Tests
 
             Assert.IsNotNull(result);
         }
-
+        
         [TestMethod()]
-        public void GetListTest()
+        public void GetAll_Test()
         {
-            Assert.Fail();
+            InvoiceRepository _invoiceRepository = new InvoiceRepository(_ConnectionString);
+
+            var result = _invoiceRepository.GetAll();
+
+            Assert.IsNotNull(result);            
         }
     }
 }
