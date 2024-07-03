@@ -25,7 +25,7 @@ namespace BookKeeping.Repository.Implement
 
         public string Insert(List<Invoice> InvoiceGroup)
         {
-            string rtn = null;
+            string rtn = null;            
             try
             {
                 using (var Transaction = new TransactionScope())
@@ -110,11 +110,9 @@ namespace BookKeeping.Repository.Implement
 
 
 
-        /// <summary>
-        /// 取得所有紀錄 暫無條件
-        /// </summary>
-        /// <returns></returns>
-        public List<InvoiceData> GetList()
+
+        //取得所有紀錄 暫無條件
+        public List<InvoiceData> GetAll()
         {
             List<InvoiceData> InvoiceDataList = new List<InvoiceData>();
 
@@ -131,10 +129,8 @@ namespace BookKeeping.Repository.Implement
             }
             catch (Exception ex)
             {
-                string rtn = ex.ToString();
-                rtn.ToString();
+                return InvoiceDataList;
             }
-            return InvoiceDataList;
         }
     }
 

@@ -14,7 +14,7 @@ namespace BookKeeping.Repository.Interface
         string Insert(List<Invoice> Invoice);
 
         //取得列表
-        List<InvoiceData> GetList();
+        List<InvoiceData> GetAll();
 
         //取得明細分類
         List<InvoiceDetailCategory> GetCategory();  
