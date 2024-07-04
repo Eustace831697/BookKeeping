@@ -14,15 +14,8 @@ namespace BookKeeping.Repository.Implement
     {
         private List<DynamicParameters> _MainParameters = new List<DynamicParameters>();
         private List<DynamicParameters> _DetailParameters = new List<DynamicParameters>();
-
-        public List<DynamicParameters> MainParameters
-        {
-            get { return _MainParameters; }
-        }
-        public List<DynamicParameters> DetailParameters
-        {
-            get { return _DetailParameters; }
-        }
+        public List<DynamicParameters> MainParameters { get { return _MainParameters; } }
+        public List<DynamicParameters> DetailParameters { get { return _DetailParameters; } }
 
         public InsertParameter(List<Invoice> InvoiceGroup)
         {
