@@ -22,12 +22,12 @@ namespace BookKeeping.Repository.Implement.Tests
     public class InvoiceRepositoryTests
     {
         private readonly string _ConnectionString = "Server=.;Database=BookKeeping;User Id=bookkeepinguser;Password=ZAQ!2wsx;Trusted_Connection=True;";
-        
+
         [TestMethod()]
         public void Insert_Test()
         {
             InvoiceRepository _invoiceRepository = new InvoiceRepository(_ConnectionString);
-            
+
             List<Invoice> invoiceGroup = new List<Invoice>();
             invoiceGroup.Add(new Invoice
             {
@@ -61,9 +61,8 @@ namespace BookKeeping.Repository.Implement.Tests
             });
 
             string result = _invoiceRepository.Insert(invoiceGroup);
-            
-            Assert.IsNull(result);
-    
+
+            Assert.IsNull(result);            
         }
 
         [TestMethod()]
@@ -75,7 +74,7 @@ namespace BookKeeping.Repository.Implement.Tests
 
             Assert.IsNotNull(result);
         }
-        
+
         [TestMethod()]
         public void GetAll_Test()
         {
@@ -83,7 +82,7 @@ namespace BookKeeping.Repository.Implement.Tests
 
             var result = _invoiceRepository.GetAll();
 
-            Assert.IsNotNull(result);            
+            Assert.IsNotNull(result);
         }
     }
 }

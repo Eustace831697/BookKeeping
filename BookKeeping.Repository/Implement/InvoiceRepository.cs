@@ -36,8 +36,8 @@ namespace BookKeeping.Repository.Implement
 
                         InsertParameter insertParameter = new InsertParameter(InvoiceGroup);
 
-                        conn.Execute("Insert_Invoice", insertParameter.MainParameters, commandType: CommandType.StoredProcedure);
-                        conn.Execute("Insert_Invoice_Detail", insertParameter.DetailParameters, commandType: CommandType.StoredProcedure);
+                        conn.Execute("Insert_Invoice", insertParameter.AllMainParameters, commandType: CommandType.StoredProcedure);
+                        conn.Execute("Insert_Invoice_Detail", insertParameter.AllDetailParameters, commandType: CommandType.StoredProcedure);
                     }
                     Transaction.Complete();
                     return rtn;
