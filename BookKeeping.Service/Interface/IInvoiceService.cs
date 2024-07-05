@@ -19,7 +19,7 @@ namespace BookKeeping.Service.Interface
         string Add(List<Invoice> Invoice);
 
         //更新發票資訊
-        int Update();
+        string Update(Invoice invoice);
 
         //刪除整張發票
         int Delete();

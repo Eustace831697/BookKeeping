@@ -28,6 +28,7 @@ namespace BookKeeping.Service.Implement
         public string Add(List<Invoice> Invoice)
         {
             string rtn = _invoiceRepository.Insert(Invoice);
+
             return rtn;
         }
 
@@ -36,9 +37,11 @@ namespace BookKeeping.Service.Implement
             throw new NotImplementedException();
         }
 
-        public int Update()
+        public string Update(Invoice invoice)
         {
-            throw new NotImplementedException();
+            string rtn = _invoiceRepository.Update(invoice);
+
+            return rtn;
         }
 
         /// <summary>

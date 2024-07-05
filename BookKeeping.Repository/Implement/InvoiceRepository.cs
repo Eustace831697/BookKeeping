@@ -92,7 +92,6 @@ namespace BookKeeping.Repository.Implement
             {
                 return ex.ToString();
             }
-
         }
 
         public List<InvoiceDetailCategory> GetCategory()

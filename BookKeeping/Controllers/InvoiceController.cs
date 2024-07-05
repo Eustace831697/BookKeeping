@@ -16,10 +16,10 @@ namespace BookKeeping.Controllers
         {
             this._invoiceService = invoiceService;
         }
- 
+
         //發票匯入頁面
         public IActionResult Add()
-        {     
+        {
             //取得明細分類列表
             var CategoryList = _invoiceService.getCategory();
 
@@ -41,32 +41,39 @@ namespace BookKeeping.Controllers
             }
             return Ok();
         }
-        
+
         //Add頁面讀取CSV檔案        
         [HttpPost("ReadFile")]
         public IActionResult ReadFile(IFormFileCollection files)
         {
             //讀取CSV的方法
             List<Invoice> invoices = _invoiceService.ReadCSV(files);
-            
+
             return Json(invoices);
         }
 
         //取得全部資料
         public IActionResult GetAll()
         {
-            List<Invoice> model= _invoiceService.GetAll();
+            List<Invoice> model = _invoiceService.GetAll();
 
             //取得明細分類列表
-            var CategoryList = _invoiceService.getCategory();            
+            var CategoryList = _invoiceService.getCategory();
 
             return View(model);
         }
 
-        public IActionResult Edit()
+        public IActionResult Edit(Guid ID)
         {
-
             return View();
+        }
+
+        //更新資料的api
+        public IActionResult UpdateInvoice(Invoice invoice)
+        {
+            string rtn = _invoiceService.Update(invoice);
+
+            return Json(rtn);
         }
 
         public IActionResult Delete()
