@@ -22,10 +22,9 @@ namespace BookKeeping.Repository.Implement
         {
             this._ConnectionString = ConnectionString;
         }
-        
+
         public string Insert(List<Invoice> InvoiceGroup)
-        {
-            string rtn = null;            
+        {            
             try
             {
                 using (var Transaction = new TransactionScope())
@@ -40,7 +39,7 @@ namespace BookKeeping.Repository.Implement
                         conn.Execute("Insert_Invoice_Detail", insertParameter.AllDetailParameters, commandType: CommandType.StoredProcedure);
                     }
                     Transaction.Complete();
-                    return rtn;
+                    return null;
                 }
             }
             catch (Exception ex)
@@ -49,23 +48,6 @@ namespace BookKeeping.Repository.Implement
             }
         }
 
-        public List<InvoiceDetailCategory> GetCategory()
-        {
-            try
-            {
-                using (var conn = new SqlConnection(_ConnectionString))
-                {
-                    conn.Open();
-                    var Category = conn.Query<InvoiceDetailCategory>("SELECT [Category],[Category_Name] fROM Invoice_Detail_Category");
-                    return Category.ToList();
-                }
-            }
-            catch (Exception ex)
-            {
-                return new List<InvoiceDetailCategory>();
-            }
-        }
-        
         public List<InvoiceData> GetAll()
         {
             List<InvoiceData> InvoiceDataList = new List<InvoiceData>();
@@ -86,6 +68,53 @@ namespace BookKeeping.Repository.Implement
                 return InvoiceDataList;
             }
         }
+
+        public string Update(Invoice invoice)
+        {
+            try
+            {
+                using (var Transaction = new TransactionScope())
+                {
+                    using (var conn = new SqlConnection(_ConnectionString))
+                    {
+                        conn.Open();
+
+                        UpdateParameter updateParameter = new UpdateParameter(invoice);
+                       
+                        conn.Execute("Update_Invoice_And_Delete_Detail", updateParameter.AllMainParameter, commandType: CommandType.StoredProcedure);
+                        conn.Execute("Insert_Invoice_Detail", updateParameter.AllDetailParameter, commandType: CommandType.StoredProcedure);
+                    }
+                    Transaction.Complete();
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
+
+        }
+
+        public List<InvoiceDetailCategory> GetCategory()
+        {
+            try
+            {
+                using (var conn = new SqlConnection(_ConnectionString))
+                {
+                    conn.Open();
+                    var Category = conn.Query<InvoiceDetailCategory>("SELECT [Category],[Category_Name] fROM Invoice_Detail_Category");
+                    return Category.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                return new List<InvoiceDetailCategory>();
+            }
+        }
+
+
+
+
     }
 
 }

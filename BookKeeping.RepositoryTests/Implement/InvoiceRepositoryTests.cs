@@ -62,7 +62,7 @@ namespace BookKeeping.Repository.Implement.Tests
 
             string result = _invoiceRepository.Insert(invoiceGroup);
 
-            Assert.IsNull(result);            
+            Assert.IsNull(result);
         }
 
         [TestMethod()]
@@ -83,6 +83,33 @@ namespace BookKeeping.Repository.Implement.Tests
             var result = _invoiceRepository.GetAll();
 
             Assert.IsNotNull(result);
+        }
+
+        [TestMethod()]
+        public void UpdateTest()
+        {
+            InvoiceRepository _invoiceRepository = new InvoiceRepository(_ConnectionString);
+
+            Invoice invoice = new Invoice
+            {
+                ID = Guid.Parse("33623F73-7A29-4C86-ACA8-7A8B1BE337DF"),
+                Carrier_Name = "手機條碼2",
+                Carrier_Number = "/DUVLOOO",
+                Date = DateTime.ParseExact("20240524", "yyyyMMdd", null),
+                BAN_of_Seller = "80328000",
+                Name_of_Seller = "統一超商股份有限公司桃園縣第OOO分公司",
+                Invoice_Number = "AR00008578",
+                Amount = 114,
+                Invoice_Status = "開立",
+                InvoiceDetail = new List<InvoiceDetail> {
+                     new InvoiceDetail { Price=59, Product_Name = "醬燒烤雞溏心蛋三明治2" },
+                     new InvoiceDetail { Price=55, Product_Name = "拿鐵冰咖啡(大)2" },
+                }
+            };
+
+            var result = _invoiceRepository.Update(invoice);
+
+            Assert.AreEqual(null, result);            
         }
     }
 }

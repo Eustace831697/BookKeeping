@@ -10,41 +10,22 @@ using System.Threading.Tasks;
 
 namespace BookKeeping.Repository.Implement
 {
-    public class InsertParameter : IInsertParameter
+    public class UpdateParameter : IUpdateParameter
     {
-        public List<DynamicParameters> AllMainParameters { get; }
-        public List<DynamicParameters> AllDetailParameters { get; }
+        public DynamicParameters AllMainParameter { get; }
+        public List<DynamicParameters> AllDetailParameter { get; }
 
-        public InsertParameter(List<Invoice> InvoiceGroup)
+        public UpdateParameter(Invoice invoice)
         {
-            AllMainParameters = new List<DynamicParameters>();
-            AllDetailParameters = new List<DynamicParameters>();
-
-            CreateInvoiceParameters(InvoiceGroup);
+            AllMainParameter = CreateMainParameter(invoice);
+            AllDetailParameter = CreateDetailParameter(invoice.ID, invoice.InvoiceDetail);
         }
 
-        private void CreateInvoiceParameters(List<Invoice> InvoiceGroup)
-        {
-            //一張發票會有一個主檔+多筆明細資料
-            //分開處理後各別加入主檔及明細的List並回傳
-            //每張發票使用同一組Guid紀錄關聯
-            foreach (Invoice invoice in InvoiceGroup)
-            {
-                Guid ID = Guid.NewGuid();
-
-                DynamicParameters MainParameters = CreateMaintParameter(ID, invoice);
-                List<DynamicParameters> DetailParameters = CreateDetailtParameter(ID, invoice.InvoiceDetail);
-
-                AllMainParameters.Add(MainParameters);
-                AllDetailParameters.AddRange(DetailParameters);
-            }
-        }
-
-        private DynamicParameters CreateMaintParameter(Guid ID, Invoice invoice)
+        private DynamicParameters CreateMainParameter(Invoice invoice)
         {
             DynamicParameters Parameter = new DynamicParameters();
 
-            Parameter.Add("@ID", ID, dbType: DbType.Guid, direction: ParameterDirection.Input, size: 38);
+            Parameter.Add("@ID", invoice.ID, dbType: DbType.Guid, direction: ParameterDirection.Input, size: 38);
             Parameter.Add("@Carrier_Name", invoice.Carrier_Name, DbType.String, ParameterDirection.Input, 50);
             Parameter.Add("@Carrier_Number", invoice.Carrier_Number, DbType.String, ParameterDirection.Input, 30);
             Parameter.Add("@Date", invoice.Date, DbType.DateTime);
@@ -57,11 +38,11 @@ namespace BookKeeping.Repository.Implement
             return Parameter;
         }
 
-        private List<DynamicParameters> CreateDetailtParameter(Guid ID, List<InvoiceDetail> DetailGroup)
+        private List<DynamicParameters> CreateDetailParameter(Guid ID, List<InvoiceDetail> invoiceDetail)
         {
             List<DynamicParameters> DetailParameters = new List<DynamicParameters>();
 
-            foreach (var Detail in DetailGroup)
+            foreach (var Detail in invoiceDetail)
             {
                 DynamicParameters Parameter = new DynamicParameters();
 
