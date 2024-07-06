@@ -24,7 +24,7 @@ namespace BookKeeping.Repository.Implement
         }
 
         public string Insert(List<Invoice> InvoiceGroup)
-        {            
+        {
             try
             {
                 using (var Transaction = new TransactionScope())
@@ -49,23 +49,18 @@ namespace BookKeeping.Repository.Implement
         }
 
         public List<InvoiceData> GetAll()
-        {
-            List<InvoiceData> InvoiceDataList = new List<InvoiceData>();
-
+        {        
             try
-            {
-                //連線
+            {                
                 using (SqlConnection conn = new SqlConnection(_ConnectionString))
                 {
                     conn.Open();
-                    InvoiceDataList = conn.Query<InvoiceData>("[dbo].[Get_Invoice_Data]", commandType: CommandType.StoredProcedure).ToList();
-
-                    return InvoiceDataList;
+                    return conn.Query<InvoiceData>("[dbo].[Get_Invoice_Data]", commandType: CommandType.StoredProcedure).ToList(); 
                 }
             }
             catch (Exception ex)
             {
-                return InvoiceDataList;
+                return null;
             }
         }
 
@@ -80,7 +75,7 @@ namespace BookKeeping.Repository.Implement
                         conn.Open();
 
                         UpdateParameter updateParameter = new UpdateParameter(invoice);
-                       
+
                         conn.Execute("Update_Invoice_And_Delete_Detail", updateParameter.AllMainParameter, commandType: CommandType.StoredProcedure);
                         conn.Execute("Insert_Invoice_Detail", updateParameter.AllDetailParameter, commandType: CommandType.StoredProcedure);
                     }
@@ -101,19 +96,32 @@ namespace BookKeeping.Repository.Implement
                 using (var conn = new SqlConnection(_ConnectionString))
                 {
                     conn.Open();
-                    var Category = conn.Query<InvoiceDetailCategory>("SELECT [Category],[Category_Name] fROM Invoice_Detail_Category");
-                    return Category.ToList();
+                    
+                    return conn.Query<InvoiceDetailCategory>("SELECT [Category],[Category_Name] fROM Invoice_Detail_Category").ToList();
                 }
             }
             catch (Exception ex)
             {
-                return new List<InvoiceDetailCategory>();
+                return null;
             }
         }
 
+        public List<InvoiceData> GetByID(Guid ID)
+        {
+            try
+            {
+                using (var conn = new SqlConnection(_ConnectionString))
+                {
+                    conn.Open();
 
-
-
+                    return conn.Query<InvoiceData>("[dbo].[Get_Invoice_Data_By_ID]", new {ID= ID}, commandType: CommandType.StoredProcedure).ToList();                   
+                }                 
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
     }
 
 }

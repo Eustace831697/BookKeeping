@@ -109,7 +109,18 @@ namespace BookKeeping.Repository.Implement.Tests
 
             var result = _invoiceRepository.Update(invoice);
 
-            Assert.AreEqual(null, result);            
+            Assert.AreEqual(null, result);
+        }
+
+        [TestMethod()]
+        public void GetByIDTest()
+        {
+            InvoiceRepository _invoiceRepository = new InvoiceRepository(_ConnectionString);
+            Guid ID = Guid.Parse("33623F73-7A29-4C86-ACA8-7A8B1BE337DF");
+
+            var result= _invoiceRepository.GetByID(ID).Count;
+
+            Assert.IsTrue(result > 0);            
         }
     }
 }

@@ -21,5 +21,7 @@ namespace BookKeeping.Repository.Interface
 
         //取得明細分類
         List<InvoiceDetailCategory> GetCategory();
+
+        List<InvoiceData> GetByID(Guid ID);
     }
 }
