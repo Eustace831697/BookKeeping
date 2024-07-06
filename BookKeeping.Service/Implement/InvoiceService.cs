@@ -44,15 +44,10 @@ namespace BookKeeping.Service.Implement
             return rtn;
         }
 
-        /// <summary>
-        /// 讀取CSV並回傳資料
-        /// </summary>
-        /// <param name="files"></param>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
+
+        // 讀取CSV並回傳資料
         public List<Invoice> ReadCSV(IFormFileCollection files)
-        {
-            //最後回傳的發票物件
+        {            
             List<Invoice> InvoiceList = new List<Invoice>();
 
             //逐個檔案讀取
@@ -131,42 +126,22 @@ namespace BookKeeping.Service.Implement
         /// <returns></returns>
         public List<Invoice> GetAll()
         {
-            //取得資料
             List<InvoiceData> invoiceData = _invoiceRepository.GetAll();
 
-            //建立model
-            List<Invoice> model = new List<Invoice>();
+            InvoiceDataManager invoiceDataManager = new InvoiceDataManager();
 
-            //加入model
-            var main = invoiceData.GroupBy(x => x.ID).Select(group=>group.First()).ToList();
-            foreach (var i in main)
-            {
-                //主檔資料
-                Invoice data = new Invoice();
-                data.ID = i.ID;
-                data.Carrier_Name = i.Carrier_Name;
-                data.Carrier_Number = i.Carrier_Number;
-                data.Date = i.Date;
-                data.BAN_of_Seller = i.BAN_of_Seller;
-                data.Name_of_Seller = i.Name_of_Seller;
-                data.Invoice_Number = i.Invoice_Number;
-                data.Amount = i.Amount;
-                data.Invoice_Status = i.Invoice_Status;
-                data.CreateDate = i.InvoiceCreateDate;
+            return invoiceDataManager.ConvertToInvoice(invoiceData);
+        }
 
-                //主檔的明細資料
-                var detail = invoiceData.Where(x => x.Invoice_ID == i.ID).ToList();
-                List<InvoiceDetail> invoiceDetail = new List<InvoiceDetail>();
+        public List<Invoice> GetByID(Guid ID)
+        {
+            List<InvoiceData> invoiceData = _invoiceRepository.GetByID(ID);
 
-                foreach (var x in detail)
-                {                    
-                    invoiceDetail.Add(new InvoiceDetail() { Product_Name = x.Product_Name, Price = x.Price, Category = x.Category,CategoryName=x.CategoryName });                
-                }
-                data.InvoiceDetail = invoiceDetail;
+            InvoiceDataManager invoiceDataManager = new InvoiceDataManager();
 
-                model.Add(data);
-            }
-            return model;
+            return invoiceDataManager.ConvertToInvoice(invoiceData);
+
+            return null;
         }
     }
 }
