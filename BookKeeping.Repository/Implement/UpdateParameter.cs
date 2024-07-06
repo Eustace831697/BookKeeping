@@ -38,11 +38,11 @@ namespace BookKeeping.Repository.Implement
             return Parameter;
         }
 
-        private List<DynamicParameters> CreateDetailParameter(Guid ID, List<InvoiceDetail> invoiceDetail)
+        private List<DynamicParameters> CreateDetailParameter(Guid ID, List<InvoiceDetail> DetailGroup)
         {
-            List<DynamicParameters> DetailParameters = new List<DynamicParameters>();
+            List<DynamicParameters> ParameterGroup = new List<DynamicParameters>();
 
-            foreach (var Detail in invoiceDetail)
+            foreach (var Detail in DetailGroup)
             {
                 DynamicParameters Parameter = new DynamicParameters();
 
@@ -51,9 +51,9 @@ namespace BookKeeping.Repository.Implement
                 Parameter.Add("@Price", Detail.Price, DbType.Int32);
                 Parameter.Add("@Category", Detail.Category, DbType.Int32);
 
-                DetailParameters.Add(Parameter);
+                ParameterGroup.Add(Parameter);
             }
-            return DetailParameters;
+            return ParameterGroup;
         }
     }
 }
