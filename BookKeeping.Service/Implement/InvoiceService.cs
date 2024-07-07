@@ -139,9 +139,7 @@ namespace BookKeeping.Service.Implement
 
             InvoiceDataManager invoiceDataManager = new InvoiceDataManager();
 
-            return invoiceDataManager.ConvertToInvoice(invoiceData);
-
-            return null;
+            return invoiceDataManager.ConvertToInvoice(invoiceData);            
         }
     }
 }

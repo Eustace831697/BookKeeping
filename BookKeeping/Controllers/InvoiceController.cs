@@ -55,19 +55,23 @@ namespace BookKeeping.Controllers
         //取得全部資料
         public IActionResult GetAll()
         {
-            List<Invoice> model = _invoiceService.GetAll();
-
-            //取得明細分類列表
-            var CategoryList = _invoiceService.getCategory();
+            List<Invoice> model = _invoiceService.GetAll();            
 
             return View(model);
         }
 
+        [HttpGet]
         public IActionResult Edit(Guid ID)
         {
-            return View();
+            Invoice model = _invoiceService.GetByID(ID)[0];
+
+            var CategoryList = _invoiceService.getCategory();
+            ViewBag.Category = new SelectList(CategoryList, "Value", "Text", 0);           
+
+            return View(model);
         }
 
+        [HttpPost("UpdateInvoice")]
         //更新資料的api
         public IActionResult UpdateInvoice(Invoice invoice)
         {

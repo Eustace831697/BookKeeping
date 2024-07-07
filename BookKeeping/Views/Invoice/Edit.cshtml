@@ -1,0 +1,152 @@
+﻿@{
+    ViewData["Title"] = "Edit";
+}
+
+@model BookKeeping.Repository.Dtos.Invoice
+
+<style>
+    .invoice td {
+        border: solid 1px;
+    }
+
+    .invoice th {
+        border: solid 1px;
+    }
+
+    .InvoiceDetail {
+        width: 100%;
+    }
+
+        .InvoiceDetail td {
+            border: none;
+        }
+
+        .InvoiceDetail th {
+            border: none;
+        }
+</style>
+
+<h1>Edit</h1>
+
+<div id="main">
+    <div class="invoiceContent" style="width:100%;">
+        <hr>
+        <table class="invoice" style="width:100%;text-align:center;">
+            <tr>
+                @* 載具名稱、載具號碼 *@
+                <th>@Html.DisplayNameFor(m => m.Carrier_Name)</th>
+                <td>@Html.TextBoxFor(m => m.Carrier_Name)</td>
+                <th>@Html.DisplayNameFor(m => m.Carrier_Number)</th>
+                <td>@Html.TextBoxFor(m => m.Carrier_Number)</td>
+            </tr>
+
+            <tr>
+                @* 發票號碼、發票日期 *@
+                <th>@Html.DisplayNameFor(m => m.Invoice_Number)</th>
+                <td>@Html.TextBoxFor(m => m.Invoice_Number)</td>
+                <th>@Html.DisplayNameFor(m => m.Date)</th>
+                <td>@Html.TextBoxFor(m => m.DateFormat, new { @type = "date", @class = "Date", @id = "Date" })</td>
+            </tr>
+
+            <tr>
+                @* 商店店名、商店統編 *@
+                <th>@Html.DisplayNameFor(m => m.Name_of_Seller)</th>
+                <td>@Html.TextBoxFor(m => m.Name_of_Seller)</td>
+                <th>@Html.DisplayNameFor(m => m.BAN_of_Seller)</th>
+                <td>@Html.TextBoxFor(m => m.BAN_of_Seller)</td>
+            </tr>
+
+            <tr>
+                @* 總金額、發票狀態 *@
+                <th>@Html.DisplayNameFor(m => m.Amount)</th>
+                <td>@Html.TextBoxFor(m => m.Amount, new { @type = "number", @min = 0 })</td>
+                <th>@Html.DisplayNameFor(m => m.Invoice_Status)</th>
+                <td>@Html.TextBoxFor(m => m.Invoice_Status)</td>
+            </tr>
+
+            <tr>
+                @* 發票明細 *@
+                <th>@Html.DisplayNameFor(m => m.InvoiceDetail)</th>
+                <td colspan="3">
+                    <table class="InvoiceDetail">
+                        @{
+                            if (Model.InvoiceDetail.Count > 0)
+                            {
+                                    <tr class="rowTitle">
+                                        <th>@Html.DisplayNameFor(m => m.InvoiceDetail[0].Product_Name)</th>
+                                        <th>@Html.DisplayNameFor(m => m.InvoiceDetail[0].Price)</th>
+                                        <th>@Html.DisplayNameFor(m => m.InvoiceDetail[0].CategoryName)</th>
+                                    </tr>
+
+                                for (int j = 0; j < Model.InvoiceDetail.Count; j++)
+                                {
+                                        <tr class="rowData">
+                                            <td>@Html.TextBoxFor(m => m.InvoiceDetail[j].Product_Name, new { @class = "Product_Name" })</td>
+                                            <td>@Html.TextBoxFor(m => m.InvoiceDetail[j].Price, new { @type = "number", @min = 0, @class = "Price" })</td>
+                                            <td>@Html.DropDownListFor(m => m.InvoiceDetail[j].Category, (SelectList)ViewBag.Category, new { @class = "Category" })</td>
+                                            <td></td>
+                                        </tr>
+                                }
+                            }
+                        }
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <input id="UpdateButton" type="button" class="btn btn-warning" value="更新" />
+</div>
+
+<script>
+    $(function () {
+
+        $('#UpdateButton').click(function () {
+            let check = confirm("確定更新此筆資料？");
+            let aa = GetDetailData();
+            console.log(aa);
+
+            if (check) {
+                $.ajax({
+                    async: false,
+                    type: 'post',
+                    url: '@Url.Action("UpdateInvoice")',
+                    data: {
+                        "ID": '@Model.ID',
+                        "Carrier_Name": $('#Carrier_Name').val(),
+                        "Carrier_Number": $('#Carrier_Number').val(),
+                        "Invoice_Number": $('#Invoice_Number').val(),
+                        "Date": $('#Date').val(),
+                        "Name_of_Seller": $('#Name_of_Seller').val(),
+                        "BAN_of_Seller": $('#BAN_of_Seller').val(),
+                        "Amount": $('#Amount').val(),
+                        "Invoice_Status": $('#Invoice_Status').val(),
+
+                        "InvoiceDetail": aa
+                    },
+                    dataType: 'json',
+                    success: function (response) {
+                        console.log(response)
+                    }
+                })
+            }
+        })
+
+        function GetDetailData() {
+
+            let DetailDataGroup = [];
+
+            let rowData = $('.rowData');
+
+            for (let i = 0; i < rowData.length; i++) {
+                let DetailData = {
+                    "Product_Name": $(rowData[i]).find('.Product_Name').val(),
+                    "Price": $(rowData[i]).find('.Price').val(),
+                    "Category": $(rowData[i]).find('.Category').val()
+                }
+                DetailDataGroup.push(DetailData);
+            }
+            return DetailDataGroup;
+        }
+    })
+
+</script>
