@@ -49,13 +49,13 @@ namespace BookKeeping.Repository.Implement
         }
 
         public List<InvoiceData> GetAll()
-        {        
+        {
             try
-            {                
+            {
                 using (SqlConnection conn = new SqlConnection(_ConnectionString))
                 {
                     conn.Open();
-                    return conn.Query<InvoiceData>("[dbo].[Get_Invoice_Data]", commandType: CommandType.StoredProcedure).ToList(); 
+                    return conn.Query<InvoiceData>("[dbo].[Get_Invoice_Data]", commandType: CommandType.StoredProcedure).ToList();
                 }
             }
             catch (Exception ex)
@@ -76,9 +76,11 @@ namespace BookKeeping.Repository.Implement
 
                         UpdateParameter updateParameter = new UpdateParameter(invoice);
 
-                        conn.Execute("Update_Invoice_And_Delete_Detail", updateParameter.AllMainParameter, commandType: CommandType.StoredProcedure);
+                        conn.Execute("Update_Invoice", updateParameter.AllMainParameter, commandType: CommandType.StoredProcedure);
+                        conn.Execute("Delete_Invoice_Detail_Only", new {ID= invoice.ID }, commandType: CommandType.StoredProcedure);
                         conn.Execute("Insert_Invoice_Detail", updateParameter.AllDetailParameter, commandType: CommandType.StoredProcedure);
                     }
+                    
                     Transaction.Complete();
                     return null;
                 }
@@ -89,14 +91,14 @@ namespace BookKeeping.Repository.Implement
             }
         }
 
-        public List<InvoiceDetailCategory> GetCategory()
+        public List<InvoiceDetailCategory> GetDetailCategoryList()
         {
             try
             {
                 using (var conn = new SqlConnection(_ConnectionString))
                 {
                     conn.Open();
-                    
+
                     return conn.Query<InvoiceDetailCategory>("SELECT [Category],[Category_Name] fROM Invoice_Detail_Category").ToList();
                 }
             }
@@ -114,12 +116,34 @@ namespace BookKeeping.Repository.Implement
                 {
                     conn.Open();
 
-                    return conn.Query<InvoiceData>("[dbo].[Get_Invoice_Data_By_ID]", new {ID= ID}, commandType: CommandType.StoredProcedure).ToList();                   
-                }                 
+                    return conn.Query<InvoiceData>("[dbo].[Get_Invoice_Data_By_ID]", new { ID = ID }, commandType: CommandType.StoredProcedure).ToList();
+                }
             }
             catch (Exception ex)
             {
                 return null;
+            }
+        }
+
+        public string Delete(Guid ID)
+        {
+            try
+            {                
+                using (var Transaction = new TransactionScope())
+                {
+                    using (var conn = new SqlConnection(_ConnectionString))
+                    {
+                        conn.Open();
+
+                        conn.Execute("Delete_Invoice", new { ID = ID }, commandType: CommandType.StoredProcedure);
+                    }
+                    Transaction.Complete();
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
             }
         }
     }

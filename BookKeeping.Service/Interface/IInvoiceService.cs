@@ -16,17 +16,19 @@ namespace BookKeeping.Service.Interface
     public interface IInvoiceService
     {  
         string Add(List<Invoice> Invoice);
-   
-        string Update(Invoice invoice);
-     
-        int Delete();
-  
+
         List<Invoice> GetAll();
 
         List<Invoice> GetByID(Guid ID);
 
-        List<Invoice> ReadCSV(IFormFileCollection files);
+        string Update(Invoice invoice);
+     
+        string Delete(Guid ID);
 
         List<SelectListItem> getCategory();
+
+        List<Invoice> ReadCSV(IFormFileCollection files);
+
+        
     }
 }

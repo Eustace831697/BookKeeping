@@ -25,7 +25,7 @@
         }
 </style>
 
-<h1>GetList</h1>
+<h1>全部列表</h1>
 
 <div id="main">
     @{
@@ -84,7 +84,7 @@
                                         {
                                             <tr class="rowData">
                                                 <td>@Html.DisplayFor(m => m[i].InvoiceDetail[j].Product_Name)</td>
-                                                <td>@Html.DisplayFor(m => m[i].InvoiceDetail[j].Price)</td>                                                
+                                                <td>@Html.DisplayFor(m => m[i].InvoiceDetail[j].Price)</td>
                                                 <td>@Html.DisplayFor(m => m[i].InvoiceDetail[j].CategoryName)</td>
                                                 <td></td>
                                             </tr>
@@ -94,10 +94,34 @@
                             </table>
                         </td>
                     </tr>
-                </table>                
+                </table>
+
+                <input type="button" class="btn btn-warning" value="更新" onclick="editItem('@Model[i].ID')">
+                <input type="button" class="btn btn-danger" value="刪除" onclick="delItem('@Model[i].ID')">
             </div>
         }
     }
 
 </div>
 <hr>
+
+<script>
+
+    function editItem(ID) {
+        location.href = '@Url.Action("Edit")/' + ID;
+    }
+
+    function delItem(ID) {
+        $.ajax({
+            async: false,
+            type: 'get',
+            url: '@Url.Action("Delete")',
+            data: { "ID": ID },
+            dataType: 'json',
+            success: function (response) {
+                console.log(response);
+            }
+        })
+    }
+
+</script>

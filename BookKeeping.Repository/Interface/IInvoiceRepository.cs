@@ -10,18 +10,17 @@ namespace BookKeeping.Repository.Interface
 {
     public interface IInvoiceRepository
     {
-        //新增
+        
         string Insert(List<Invoice> invoice);
-
-        //存取
+        
         List<InvoiceData> GetAll();
 
-        //更新
+        List<InvoiceData> GetByID(Guid ID);
+        
         string Update(Invoice invoice);
 
-        //取得明細分類
-        List<InvoiceDetailCategory> GetCategory();
-
-        List<InvoiceData> GetByID(Guid ID);
+        string Delete(Guid ID);
+                
+        List<InvoiceDetailCategory> GetDetailCategoryList();
     }
 }

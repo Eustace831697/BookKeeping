@@ -108,7 +108,7 @@ namespace BookKeeping.Service.Implement
         public List<SelectListItem> getCategory()
         {
             //取得分類
-            var CategoryList = _invoiceRepository.GetCategory();
+            var CategoryList = _invoiceRepository.GetDetailCategoryList();
 
             //將各分類加入下拉選項
             List<SelectListItem> selectListItems = new List<SelectListItem>();            
@@ -140,6 +140,11 @@ namespace BookKeeping.Service.Implement
             InvoiceDataManager invoiceDataManager = new InvoiceDataManager();
 
             return invoiceDataManager.ConvertToInvoice(invoiceData);            
+        }
+
+        public string Delete(Guid ID)
+        {
+            return _invoiceRepository.Delete(ID);
         }
     }
 }

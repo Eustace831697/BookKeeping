@@ -77,12 +77,15 @@ namespace BookKeeping.Controllers
         {
             string rtn = _invoiceService.Update(invoice);
 
-            return Json(rtn);
+            return Json(rtn); 
         }
 
-        public IActionResult Delete()
+        [HttpGet]
+        public IActionResult Delete(Guid ID)
         {
-            return View();
+            string rtn = _invoiceService.Delete(ID);
+
+            return Json(rtn);
         }
     }
 }

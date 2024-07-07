@@ -70,7 +70,7 @@ namespace BookKeeping.Repository.Implement.Tests
         {
             InvoiceRepository _invoiceRepository = new InvoiceRepository(_ConnectionString);
 
-            var result = _invoiceRepository.GetCategory();
+            var result = _invoiceRepository.GetDetailCategoryList;
 
             Assert.IsNotNull(result);
         }
@@ -118,9 +118,20 @@ namespace BookKeeping.Repository.Implement.Tests
             InvoiceRepository _invoiceRepository = new InvoiceRepository(_ConnectionString);
             Guid ID = Guid.Parse("33623F73-7A29-4C86-ACA8-7A8B1BE337DF");
 
-            var result= _invoiceRepository.GetByID(ID).Count;
+            var result = _invoiceRepository.GetByID(ID).Count;
 
-            Assert.IsTrue(result > 0);            
+            Assert.IsTrue(result > 0);
+        }
+
+        [TestMethod()]
+        public void DeleteTest()
+        {
+            InvoiceRepository _invoiceRepository = new InvoiceRepository(_ConnectionString);
+            Guid ID = Guid.Parse("3D2D7DB5-8B90-44A1-A046-B1939372D164");
+
+            var result= _invoiceRepository.Delete(ID);
+
+            Assert.IsNull(result);
         }
     }
 }
