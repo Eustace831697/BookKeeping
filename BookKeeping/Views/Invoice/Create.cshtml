@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Add";
+    ViewData["Title"] = "Create";
 }
 
 @model BookKeeping.Repository.Dtos.Invoice
@@ -104,7 +104,7 @@
                             <td>@Html.TextBoxFor(m => m.InvoiceDetail[0].Price, new { @class = "Price", @type = "number" })</td>
 
                             <th>@Html.DisplayNameFor(m => m.InvoiceDetail[0].Category)</th>
-                            <td>@Html.DropDownListFor(m => m.InvoiceDetail[0].Category, (SelectList)ViewBag.Category, new { @class = "Category" })</td>
+                            <td>@Html.DropDownListFor(m => m.InvoiceDetail[0].Category, (SelectList)ViewBag.CategoryList, new { @class = "Category" })</td>
 
                             <td>
                                 <a class="rowDataAdd btn btn-outline-dark">
@@ -157,7 +157,6 @@
             if (rowData_Count > 1) {
                 $(this).closest('tr').remove();
             }
-
         })
 
         //移除主檔
@@ -165,7 +164,6 @@
             if ($('.invoiceContent').length > 1) {
                 $(this).closest('.invoiceContent').remove();
             }
-
         })
 
         //送出發票資料
@@ -228,12 +226,10 @@
             $.ajax({
                 async: false,
                 type: 'post',
-                url: '@Url.Action("AddInvoice")',
+                url: '@Url.Action("Add")',
                 data: data,
                 dataType: 'text',
-                success: function (response) {
-                    console.log('有進success嗎')
-                    console.log(response);
+                success: function (response) {                    
                     alert("匯入完成");
                     location.href = '@Url.Action("GetAll")';                    
                 }

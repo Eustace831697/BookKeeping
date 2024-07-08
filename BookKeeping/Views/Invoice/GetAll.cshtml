@@ -108,20 +108,27 @@
 <script>
 
     function editItem(ID) {
-        location.href = '@Url.Action("Edit")/' + ID;
+        url = '@Url.Action("Edit", "Invoice", new { ID = "_ID" })';
+        url = url.replace("_ID", ID);
+        location.href = url;
     }
 
     function delItem(ID) {
-        $.ajax({
-            async: false,
-            type: 'get',
-            url: '@Url.Action("Delete")',
-            data: { "ID": ID },
-            dataType: 'json',
-            success: function (response) {
-                console.log(response);
-            }
-        })
+        let check = confirm("是否刪除此筆資料？");
+        if (check) {
+            $.ajax({
+                async: false,
+                type: 'delete',
+                url: '@Url.Action("Delete")',
+                data: { "ID": ID },
+                dataType: 'json',
+                success: function (response) {
+                    console.log(response);
+                    alert("刪除完成");
+                    location.reload();
+                }
+            })
+        }
     }
 
 </script>

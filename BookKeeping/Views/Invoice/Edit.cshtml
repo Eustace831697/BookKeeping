@@ -72,20 +72,20 @@
                         @{
                             if (Model.InvoiceDetail.Count > 0)
                             {
-                                    <tr class="rowTitle">
-                                        <th>@Html.DisplayNameFor(m => m.InvoiceDetail[0].Product_Name)</th>
-                                        <th>@Html.DisplayNameFor(m => m.InvoiceDetail[0].Price)</th>
-                                        <th>@Html.DisplayNameFor(m => m.InvoiceDetail[0].CategoryName)</th>
-                                    </tr>
+                                <tr class="rowTitle">
+                                    <th>@Html.DisplayNameFor(m => m.InvoiceDetail[0].Product_Name)</th>
+                                    <th>@Html.DisplayNameFor(m => m.InvoiceDetail[0].Price)</th>
+                                    <th>@Html.DisplayNameFor(m => m.InvoiceDetail[0].CategoryName)</th>
+                                </tr>
 
                                 for (int j = 0; j < Model.InvoiceDetail.Count; j++)
                                 {
-                                        <tr class="rowData">
-                                            <td>@Html.TextBoxFor(m => m.InvoiceDetail[j].Product_Name, new { @class = "Product_Name" })</td>
-                                            <td>@Html.TextBoxFor(m => m.InvoiceDetail[j].Price, new { @type = "number", @min = 0, @class = "Price" })</td>
-                                            <td>@Html.DropDownListFor(m => m.InvoiceDetail[j].Category, (SelectList)ViewBag.Category, new { @class = "Category" })</td>
-                                            <td></td>
-                                        </tr>
+                                    <tr class="rowData">
+                                        <td>@Html.TextBoxFor(m => m.InvoiceDetail[j].Product_Name, new { @class = "Product_Name" })</td>
+                                        <td>@Html.TextBoxFor(m => m.InvoiceDetail[j].Price, new { @type = "number", @min = 0, @class = "Price" })</td>
+                                        <td>@Html.DropDownListFor(m => m.InvoiceDetail[j].Category, (SelectList)ViewBag.Category, new { @class = "Category" })</td>
+                                        <td></td>
+                                    </tr>
                                 }
                             }
                         }
@@ -102,14 +102,13 @@
 
         $('#UpdateButton').click(function () {
             let check = confirm("確定更新此筆資料？");
-            let aa = GetDetailData();
-            console.log(aa);
+            let DetailData = GetDetailData();
 
             if (check) {
                 $.ajax({
                     async: false,
-                    type: 'post',
-                    url: '@Url.Action("UpdateInvoice")',
+                    type: 'put',
+                    url: '@Url.Action("Update")',
                     data: {
                         "ID": '@Model.ID',
                         "Carrier_Name": $('#Carrier_Name').val(),
@@ -120,8 +119,7 @@
                         "BAN_of_Seller": $('#BAN_of_Seller').val(),
                         "Amount": $('#Amount').val(),
                         "Invoice_Status": $('#Invoice_Status').val(),
-
-                        "InvoiceDetail": aa
+                        "InvoiceDetail": DetailData
                     },
                     dataType: 'json',
                     success: function (response) {
