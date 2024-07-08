@@ -27,6 +27,8 @@ namespace BookKeeping.Repository.Implement
         {
             try
             {
+                int MainCount = 0, DetailCount = 0;
+
                 using (var Transaction = new TransactionScope())
                 {
                     using (var conn = new SqlConnection(_ConnectionString))
@@ -35,12 +37,20 @@ namespace BookKeeping.Repository.Implement
 
                         InsertParameter insertParameter = new InsertParameter(InvoiceGroup);
 
-                        conn.Execute("Insert_Invoice", insertParameter.AllMainParameters, commandType: CommandType.StoredProcedure);
-                        conn.Execute("Insert_Invoice_Detail", insertParameter.AllDetailParameters, commandType: CommandType.StoredProcedure);
+                        MainCount = conn.Execute("Insert_Invoice", insertParameter.AllMainParameters, commandType: CommandType.StoredProcedure);
+                        DetailCount = conn.Execute("Insert_Invoice_Detail", insertParameter.AllDetailParameters, commandType: CommandType.StoredProcedure);
+
+                        if (MainCount > 0 && DetailCount > 0)
+                        {
+                            Transaction.Complete();
+                        }
+                        else
+                        {
+                            return "寫入資料數量錯誤";
+                        }
                     }
-                    Transaction.Complete();
-                    return null;
                 }
+                return null;
             }
             catch (Exception ex)
             {
@@ -56,50 +66,6 @@ namespace BookKeeping.Repository.Implement
                 {
                     conn.Open();
                     return conn.Query<InvoiceData>("[dbo].[Get_Invoice_Data]", commandType: CommandType.StoredProcedure).ToList();
-                }
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
-        }
-
-        public string Update(Invoice invoice)
-        {
-            try
-            {
-                using (var Transaction = new TransactionScope())
-                {
-                    using (var conn = new SqlConnection(_ConnectionString))
-                    {
-                        conn.Open();
-
-                        UpdateParameter updateParameter = new UpdateParameter(invoice);
-
-                        conn.Execute("Update_Invoice", updateParameter.AllMainParameter, commandType: CommandType.StoredProcedure);
-                        conn.Execute("Delete_Invoice_Detail_Only", new {ID= invoice.ID }, commandType: CommandType.StoredProcedure);
-                        conn.Execute("Insert_Invoice_Detail", updateParameter.AllDetailParameter, commandType: CommandType.StoredProcedure);
-                    }
-                    
-                    Transaction.Complete();
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                return ex.ToString();
-            }
-        }
-
-        public List<InvoiceDetailCategory> GetDetailCategoryList()
-        {
-            try
-            {
-                using (var conn = new SqlConnection(_ConnectionString))
-                {
-                    conn.Open();
-
-                    return conn.Query<InvoiceDetailCategory>("SELECT [Category],[Category_Name] fROM Invoice_Detail_Category").ToList();
                 }
             }
             catch (Exception ex)
@@ -125,20 +91,81 @@ namespace BookKeeping.Repository.Implement
             }
         }
 
-        public string Delete(Guid ID)
+        public string Update(Invoice invoice)
         {
             try
-            {                
+            {
+                int UpdateCount = 0, DeleteDetailCount = 0, InsertDetailCount = 0;
+
                 using (var Transaction = new TransactionScope())
                 {
                     using (var conn = new SqlConnection(_ConnectionString))
                     {
                         conn.Open();
 
-                        conn.Execute("Delete_Invoice", new { ID = ID }, commandType: CommandType.StoredProcedure);
+                        UpdateParameter updateParameter = new UpdateParameter(invoice);
+
+                        UpdateCount = conn.Execute("Update_Invoice", updateParameter.AllMainParameter, commandType: CommandType.StoredProcedure);
+                        DeleteDetailCount = conn.Execute("Delete_Invoice_Detail_Only", new { ID = invoice.ID }, commandType: CommandType.StoredProcedure);
+                        InsertDetailCount = conn.Execute("Insert_Invoice_Detail", updateParameter.AllDetailParameter, commandType: CommandType.StoredProcedure);
                     }
-                    Transaction.Complete();
-                    return null;
+
+                    if (UpdateCount > 0 && DeleteDetailCount > 0 && InsertDetailCount > 0)
+                    {
+                        Transaction.Complete();
+                        return null;
+                    }
+                    else
+                    {
+                        return "更新資料數量錯誤";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
+        }
+
+        public List<InvoiceDetailCategory> GetDetailCategoryList()
+        {
+            try
+            {
+                using (var conn = new SqlConnection(_ConnectionString))
+                {
+                    conn.Open();
+
+                    return conn.Query<InvoiceDetailCategory>("SELECT [Category],[Category_Name] fROM Invoice_Detail_Category").ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public string Delete(Guid ID)
+        {
+            try
+            {
+                int DeleteCount = 0;
+                using (var Transaction = new TransactionScope())
+                {
+                    using (var conn = new SqlConnection(_ConnectionString))
+                    {
+                        conn.Open();
+
+                        DeleteCount = conn.Execute("Delete_Invoice", new { ID = ID }, commandType: CommandType.StoredProcedure);
+                    }
+                    if (DeleteCount > 0)
+                    {
+                        Transaction.Complete();
+                        return null;
+                    }
+                    else
+                    {
+                        return "刪除資料數量錯誤";
+                    }
                 }
             }
             catch (Exception ex)

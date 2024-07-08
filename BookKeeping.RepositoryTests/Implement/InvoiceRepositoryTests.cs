@@ -22,6 +22,7 @@ namespace BookKeeping.Repository.Implement.Tests
     public class InvoiceRepositoryTests
     {
         private readonly string _ConnectionString = "Server=.;Database=BookKeeping;User Id=bookkeepinguser;Password=ZAQ!2wsx;Trusted_Connection=True;";
+        private readonly string _ID = "B1AC8D88-E289-4932-A119-0778AF224362";
 
         [TestMethod()]
         public void Insert_Test()
@@ -62,7 +63,7 @@ namespace BookKeeping.Repository.Implement.Tests
 
             string result = _invoiceRepository.Insert(invoiceGroup);
 
-            Assert.IsNull(result);
+            Assert.AreEqual(null, result);
         }
 
         [TestMethod()]
@@ -70,9 +71,9 @@ namespace BookKeeping.Repository.Implement.Tests
         {
             InvoiceRepository _invoiceRepository = new InvoiceRepository(_ConnectionString);
 
-            var result = _invoiceRepository.GetDetailCategoryList;
+            var result = _invoiceRepository.GetDetailCategoryList();
 
-            Assert.IsNotNull(result);
+            Assert.IsTrue(result.Count > 0);
         }
 
         [TestMethod()]
@@ -82,7 +83,7 @@ namespace BookKeeping.Repository.Implement.Tests
 
             var result = _invoiceRepository.GetAll();
 
-            Assert.IsNotNull(result);
+            Assert.IsTrue(result.Count > 0);
         }
 
         [TestMethod()]
@@ -92,7 +93,7 @@ namespace BookKeeping.Repository.Implement.Tests
 
             Invoice invoice = new Invoice
             {
-                ID = Guid.Parse("33623F73-7A29-4C86-ACA8-7A8B1BE337DF"),
+                ID = Guid.Parse(_ID),
                 Carrier_Name = "手機條碼2",
                 Carrier_Number = "/DUVLOOO",
                 Date = DateTime.ParseExact("20240524", "yyyyMMdd", null),
@@ -116,20 +117,20 @@ namespace BookKeeping.Repository.Implement.Tests
         public void GetByIDTest()
         {
             InvoiceRepository _invoiceRepository = new InvoiceRepository(_ConnectionString);
-            Guid ID = Guid.Parse("33623F73-7A29-4C86-ACA8-7A8B1BE337DF");
+            Guid ID = Guid.Parse(_ID);
 
-            var result = _invoiceRepository.GetByID(ID).Count;
+            var result = _invoiceRepository.GetByID(ID);
 
-            Assert.IsTrue(result > 0);
+            Assert.IsTrue(result.Count > 0);
         }
 
         [TestMethod()]
         public void DeleteTest()
         {
             InvoiceRepository _invoiceRepository = new InvoiceRepository(_ConnectionString);
-            Guid ID = Guid.Parse("3D2D7DB5-8B90-44A1-A046-B1939372D164");
+            Guid ID = Guid.Parse(_ID);
 
-            var result= _invoiceRepository.Delete(ID);
+            var result = _invoiceRepository.Delete(ID);
 
             Assert.IsNull(result);
         }
