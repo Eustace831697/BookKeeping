@@ -16,8 +16,7 @@ namespace BookKeeping.Controllers
         {
             this._invoiceService = invoiceService;
         }
-
-        [HttpGet("[Controller]/[action]")]
+                
         public IActionResult Create()
         {
             //取得明細分類列表
@@ -28,10 +27,9 @@ namespace BookKeeping.Controllers
 
             return View();
         }
-
-        [HttpGet("[controller]/{ID}")]
+        
         public IActionResult Edit(Guid ID)
-        {
+        {            
             Invoice model = _invoiceService.GetByID(ID)[0];
 
             var CategoryList = _invoiceService.getCategory();
@@ -43,11 +41,16 @@ namespace BookKeeping.Controllers
         [HttpPost("[controller]")]
         public IActionResult Add(List<Invoice> Invoices)
         {
-            string rtn = _invoiceService.Add(Invoices);
+            if (!ModelState.IsValid)
+            {                
+                return BadRequest(ModelState);
+            }
 
+            string rtn = _invoiceService.Add(Invoices);
+            
             if (!string.IsNullOrEmpty(rtn))
             {
-                return BadRequest(rtn);
+                return StatusCode(500, rtn);
             }
             return Ok();
         }
@@ -63,17 +66,35 @@ namespace BookKeeping.Controllers
         [HttpPut("[controller]")]
         public IActionResult Update(Invoice invoice)
         {
-            string rtn = _invoiceService.Update(invoice);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-            return Json(rtn);
+            string rtn = _invoiceService.Update(invoice);
+            
+            if (!string.IsNullOrEmpty(rtn))
+            {
+                return StatusCode(500, rtn);
+            }
+            return Ok();
         }
 
         [HttpDelete("[controller]")]
         public IActionResult Delete(Guid ID)
         {
-            string rtn = _invoiceService.Delete(ID);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-            return Json(rtn);
+            string rtn = _invoiceService.Delete(ID);
+            rtn = "aa";
+            if (!string.IsNullOrEmpty(rtn))
+            {
+                return StatusCode(500, rtn);
+            }
+            return Ok();
         }
 
         [HttpPost("ReadFile")]

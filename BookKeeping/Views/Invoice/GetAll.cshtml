@@ -126,6 +126,14 @@
                     console.log(response);
                     alert("刪除完成");
                     location.reload();
+                }, statusCode: {
+                    400: function (errorMessage) {
+                        console.log(errorMessage);
+                        alert("刪除失敗");
+                    }, 500: function (errorMessage) {
+                        console.log(errorMessage.responseText);
+                        alert("刪除失敗：\r\n" + errorMessage.responseText);
+                    }
                 }
             })
         }

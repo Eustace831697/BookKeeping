@@ -48,11 +48,6 @@
             </td>
         </tr>
     </table>
-
-
-
-
-
 </div>
 
 <div id="main">
@@ -169,8 +164,8 @@
         })
 
         //送出發票資料
-        $('#send').click(function () {      
-            
+        $('#send').click(function () {
+
             //發票總數
             let Invoice_Count = $('.invoiceContent');
 
@@ -230,10 +225,18 @@
                 type: 'post',
                 url: '@Url.Action("Add")',
                 data: data,
-                dataType: 'text',
-                success: function (response) {                    
+                dataType: 'json',
+                success: function (response) {
                     alert("匯入完成");
-                    location.href = '@Url.Action("GetAll")';                    
+                    location.href = '@Url.Action("GetAll")';
+                }, statusCode: {
+                    400: function (errorMessage) {
+                        console.log(errorMessage);
+                        alert("儲存失敗，請檢查必填項目。");
+                    }, 500: function (errorMessage) {
+                        console.log(errorMessage.responseText);
+                        alert("儲存失敗：\r\n" + errorMessage.responseText);
+                    }
                 }
             })
         })
@@ -261,57 +264,62 @@
                 success: function (response) {
                     //資料塞進畫面
                     if (response.length > 0) {
-                        console.log(response);
-
-                        //清除畫面資料
-                        $('.invoiceContent').slice(1).remove();
-                        //清除內容
-                        $('.invoiceContent').find('input').val('');
-                        //清除明細列
-                        $('.rowDataRemove').click();
-
-                        //產生新主檔
-                        for (let i = 0; i < response.length - 1; i++) {
-                            $('#btn_AddInvoice').click();
-                        }
-
-                        let invoice = $('.invoiceContent');
-
-                        for (let i = 0; i < response.length; i++) {
-
-                            //新增主檔
-                            $(invoice[i]).find('.Carrier_Name').val(response[i].carrier_Name);
-                            $(invoice[i]).find('.Carrier_Number').val(response[i].carrier_Number);
-                            $(invoice[i]).find('.Date').val(response[i].date.split('T')[0]);
-                            $(invoice[i]).find('.BAN_of_Seller').val(response[i].baN_of_Seller);
-                            $(invoice[i]).find('.Name_of_Seller').val(response[i].name_of_Seller);
-                            $(invoice[i]).find('.Invoice_Number').val(response[i].invoice_Number);
-                            $(invoice[i]).find('.Amount').val(response[i].amount);
-                            $(invoice[i]).find('.Invoice_Status').val(response[i].invoice_Status);
-
-                            //明細資料
-                            let DetailData = response[i].invoiceDetail;
-
-                            //產生明細行
-                            for (let j = 0; j < DetailData.length - 1; j++) {
-                                $(invoice[i]).find('.rowDataAdd').click();
-                            }
-
-                            //新增明細
-                            let Detail = $(invoice[i]).find('.rowData');
-
-                            for (let j = 0; j < DetailData.length; j++) {
-                                $(Detail[j]).find('.Product_Name').val(DetailData[j].product_Name)
-                                $(Detail[j]).find('.Price').val(DetailData[j].price)
-                                $(Detail[j]).find('.Category').val(DetailData[j].category)
-                            }
-                        }
+                        RenderData(response);
                     }
+                }, error: function (error) {
+                    alert("匯入失敗：\r\n", error);
                 }
             })
         })
     });
 
+
+    function RenderData(response) {
+
+        //清除畫面資料
+        $('.invoiceContent').slice(1).remove();
+        //清除內容
+        $('.invoiceContent').find('input').val('');
+        //清除明細列
+        $('.rowDataRemove').click();
+
+        //產生新主檔
+        for (let i = 0; i < response.length - 1; i++) {
+            $('#btn_AddInvoice').click();
+        }
+
+        let invoice = $('.invoiceContent');
+
+        for (let i = 0; i < response.length; i++) {
+
+            //新增主檔
+            $(invoice[i]).find('.Carrier_Name').val(response[i].carrier_Name);
+            $(invoice[i]).find('.Carrier_Number').val(response[i].carrier_Number);
+            $(invoice[i]).find('.Date').val(response[i].date.split('T')[0]);
+            $(invoice[i]).find('.BAN_of_Seller').val(response[i].baN_of_Seller);
+            $(invoice[i]).find('.Name_of_Seller').val(response[i].name_of_Seller);
+            $(invoice[i]).find('.Invoice_Number').val(response[i].invoice_Number);
+            $(invoice[i]).find('.Amount').val(response[i].amount);
+            $(invoice[i]).find('.Invoice_Status').val(response[i].invoice_Status);
+
+            //明細資料
+            let DetailData = response[i].invoiceDetail;
+
+            //產生明細行
+            for (let j = 0; j < DetailData.length - 1; j++) {
+                $(invoice[i]).find('.rowDataAdd').click();
+            }
+
+            //新增明細
+            let Detail = $(invoice[i]).find('.rowData');
+
+            for (let j = 0; j < DetailData.length; j++) {
+                $(Detail[j]).find('.Product_Name').val(DetailData[j].product_Name)
+                $(Detail[j]).find('.Price').val(DetailData[j].price)
+                $(Detail[j]).find('.Category').val(DetailData[j].category)
+            }
+        }
+    }
 </script>
 
 
