@@ -123,7 +123,9 @@
                     },
                     dataType: 'json',
                     success: function (response) {
-                        console.log(response)
+                        console.log(response);
+                        alert("更新完成");
+                        location.href = "@Url.Action("GetAll")";
                     }
                 })
             }

@@ -163,6 +163,8 @@
         $('#main').on('click', '.invoiceRemove', function () {
             if ($('.invoiceContent').length > 1) {
                 $(this).closest('.invoiceContent').remove();
+            } else {
+                alert("請至少保留一行明細列");
             }
         })
 
