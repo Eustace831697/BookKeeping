@@ -124,15 +124,15 @@ namespace BookKeeping.Service.Implement
         /// 取得資料並加入model
         /// </summary>
         /// <returns></returns>
-        public List<Invoice> GetAll()
+        public List<Invoice> GetAll(InvoiceQueryCondition invoiceQueryCondition)
         {
-            List<InvoiceData> invoiceData = _invoiceRepository.GetAll();
+            List<InvoiceData> invoiceData = _invoiceRepository.GetAll(invoiceQueryCondition);
 
             InvoiceDataManager invoiceDataManager = new InvoiceDataManager();
 
             return invoiceDataManager.ConvertToInvoice(invoiceData);
         }
-
+       
         public List<Invoice> GetByID(Guid ID)
         {
             List<InvoiceData> invoiceData = _invoiceRepository.GetByID(ID);
@@ -146,5 +146,7 @@ namespace BookKeeping.Service.Implement
         {
             return _invoiceRepository.Delete(ID);
         }
+
+        
     }
 }

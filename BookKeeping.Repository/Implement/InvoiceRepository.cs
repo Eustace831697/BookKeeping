@@ -58,19 +58,23 @@ namespace BookKeeping.Repository.Implement
             }
         }
 
-        public List<InvoiceData> GetAll()
+        public List<InvoiceData> GetAll(InvoiceQueryCondition QueryCondition)
         {
             try
             {
                 using (SqlConnection conn = new SqlConnection(_ConnectionString))
                 {
                     conn.Open();
-                    return conn.Query<InvoiceData>("[dbo].[Get_Invoice_Data]", commandType: CommandType.StoredProcedure).ToList();
+
+                    QueryParameter queryParameter = new QueryParameter(QueryCondition);
+                    DynamicParameters parameters = queryParameter.GetParameters();
+                    
+                    return conn.Query<InvoiceData>("[dbo].[Get_Invoice_Data]", parameters, commandType: CommandType.StoredProcedure).ToList();
                 }
             }
             catch (Exception ex)
-            {
-                return null;
+            {                
+                return null;                
             }
         }
 
@@ -173,6 +177,8 @@ namespace BookKeeping.Repository.Implement
                 return ex.ToString();
             }
         }
+
+
     }
 
 }

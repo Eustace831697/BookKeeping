@@ -16,7 +16,7 @@ namespace BookKeeping.Controllers
         {
             this._invoiceService = invoiceService;
         }
-                
+
         public IActionResult Create()
         {
             //取得明細分類列表
@@ -27,9 +27,9 @@ namespace BookKeeping.Controllers
 
             return View();
         }
-        
+
         public IActionResult Edit(Guid ID)
-        {            
+        {
             Invoice model = _invoiceService.GetByID(ID)[0];
 
             var CategoryList = _invoiceService.getCategory();
@@ -37,17 +37,17 @@ namespace BookKeeping.Controllers
 
             return View(model);
         }
- 
+
         [HttpPost("[controller]")]
         public IActionResult Add(List<Invoice> Invoices)
         {
             if (!ModelState.IsValid)
-            {                
+            {
                 return BadRequest(ModelState);
             }
 
             string rtn = _invoiceService.Add(Invoices);
-            
+
             if (!string.IsNullOrEmpty(rtn))
             {
                 return StatusCode(500, rtn);
@@ -56,9 +56,11 @@ namespace BookKeeping.Controllers
         }
 
         [HttpGet("[controller]")]
-        public IActionResult GetAll()
+        public IActionResult GetAll(InvoiceQueryCondition queryCondition)
         {
-            List<Invoice> model = _invoiceService.GetAll();
+            var model = _invoiceService.GetAll(queryCondition);
+
+            ViewBag.QueryCondition = queryCondition;
 
             return View(model);
         }
@@ -72,7 +74,7 @@ namespace BookKeeping.Controllers
             }
 
             string rtn = _invoiceService.Update(invoice);
-            
+
             if (!string.IsNullOrEmpty(rtn))
             {
                 return StatusCode(500, rtn);
@@ -89,7 +91,7 @@ namespace BookKeeping.Controllers
             }
 
             string rtn = _invoiceService.Delete(ID);
-            rtn = "aa";
+
             if (!string.IsNullOrEmpty(rtn))
             {
                 return StatusCode(500, rtn);
@@ -104,6 +106,6 @@ namespace BookKeeping.Controllers
             List<Invoice> invoices = _invoiceService.ReadCSV(files);
 
             return Json(invoices);
-        }        
+        }
     }
 }

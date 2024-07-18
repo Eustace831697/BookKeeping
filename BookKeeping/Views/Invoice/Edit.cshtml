@@ -126,11 +126,13 @@
                         console.log(response);
                         alert("更新完成");
                         location.href = "@Url.Action("GetAll")";
-                    }, statusCode: {
+                    },
+                    statusCode: {
                         400: function (errorMessage) {
                             console.log(errorMessage);
                             alert("更新失敗，請檢查必填項目。");
-                        }, 500: function (errorMessage) {
+                        }, 
+                        500: function (errorMessage) {
                             console.log(errorMessage.responseText);
                             alert("更新失敗：\r\n" + errorMessage.responseText);
                         }

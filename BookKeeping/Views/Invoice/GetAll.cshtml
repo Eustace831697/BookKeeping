@@ -23,9 +23,75 @@
         .InvoiceDetail th {
             border: none;
         }
+
+    #queryFormContainer {
+        position: absolute;
+        width: 400px;
+        padding: 20px;
+        background: white;
+        border: 1px solid #ccc;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        display: none;
+    }
 </style>
 
-<h1>全部列表</h1>
+<div style="width:100%">
+    <table style="width:100%">
+        <tr>
+            <td>
+                <h1>全部列表</h1>
+            </td>
+            <td style="text-align:right">
+                <input type="button" id="showQueryBtn" class="btn btn-primary" value="查詢" />
+                <div id="queryFormContainer" class="mt-3">
+                    <form id="queryForm" class="form-inline" action="@Url.Action("GetAll")" method="get">
+
+                        <div class="form-group">
+                            <label for="invoiceNumber">發票號碼</label>
+                            <input type="text" class="form-control" id="InvoiceNumber" name="InvoiceNumber" value="@ViewBag.QueryCondition.InvoiceNumber">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productName">品項名稱</label>
+                            <input type="text" class="form-control" id="ProductName" name="ProductName" value="@ViewBag.QueryCondition.ProductName">
+                        </div>
+
+                        <div class="form-group row">
+
+                            <label for="startDate">日期</label>
+                            <div class="col-md-5">
+                                <input type="date" class="form-control" id="StartDate" name="StartDate" value="@ViewBag.QueryCondition.StartDateFormat">
+                            </div>
+                            <div class="col-sm-2" style="text-align:center">
+                                ~
+                            </div>
+
+                            <div class="col-md-5">
+                                <input type="date" class="form-control" id="EndDate" name="EndDate" value="@ViewBag.QueryCondition.EndDateFormat">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="minAmount">總金額</label>
+                            <div class="col-md-5">
+                                <input type="number" class="form-control" id="minAmount" name="MinAmount" min="0" value="@ViewBag.QueryCondition.MinAmount">
+                            </div>
+                            <div class="col-md-2" style="text-align:center">
+                                ~
+                            </div>
+                            <div class="col-md-5">
+                                <input type="number" class="form-control" id="maxAmount" name="MaxAmount" min="0" value="@ViewBag.QueryCondition.MaxAmount">
+                            </div>
+                        </div>
+                        <input type="submit" id="submitQueryBtn" class="btn btn-primary" value="送出" />
+                       @*  <button type="button" id="submitQueryBtn" class="btn btn-primary">送出</button> *@
+                    </form>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
 
 <div id="main">
     @{
@@ -106,6 +172,18 @@
 <hr>
 
 <script>
+
+    $(function () {
+        $('#showQueryBtn').click(function () {
+            var buttonOffset = $(this).offset();
+            var buttonWidth = $(this).outerWidth();
+            var formWidth = $('#queryFormContainer').outerWidth();
+            $('#queryFormContainer').css({
+                top: buttonOffset.top + $(this).outerHeight(),
+                left: buttonOffset.left + buttonWidth - formWidth
+            }).toggle();
+        });
+    });
 
     function editItem(ID) {
         url = '@Url.Action("Edit", "Invoice", new { ID = "_ID" })';

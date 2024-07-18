@@ -13,7 +13,9 @@ namespace BookKeeping.Repository.Interface
         
         string Insert(List<Invoice> invoice);
         
-        List<InvoiceData> GetAll();
+        List<InvoiceData> GetAll(InvoiceQueryCondition invoiceQueryCondition);
+
+        //List<InvoiceData> GetAllWithCondition(InvoiceQueryCondition invoiceQueryCondition);
 
         List<InvoiceData> GetByID(Guid ID);
         

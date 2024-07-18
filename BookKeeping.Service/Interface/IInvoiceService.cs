@@ -17,7 +17,7 @@ namespace BookKeeping.Service.Interface
     {  
         string Add(List<Invoice> Invoice);
 
-        List<Invoice> GetAll();
+        List<Invoice> GetAll(InvoiceQueryCondition invoiceQueryCondition);
 
         List<Invoice> GetByID(Guid ID);
 
