@@ -80,8 +80,9 @@ namespace BookKeeping.Repository.Implement.Tests
         public void GetAll_Test()
         {
             InvoiceRepository _invoiceRepository = new InvoiceRepository(_ConnectionString);
+            InvoiceQueryCondition queryCondition=new InvoiceQueryCondition();
 
-            var result = _invoiceRepository.GetAll();
+            var result = _invoiceRepository.GetAll(queryCondition);
 
             Assert.IsTrue(result.Count > 0);
         }

@@ -27,8 +27,6 @@ namespace BookKeeping.Repository.Implement
         {
             try
             {
-                int MainCount = 0, DetailCount = 0;
-
                 using (var Transaction = new TransactionScope())
                 {
                     using (var conn = new SqlConnection(_ConnectionString))
@@ -37,20 +35,12 @@ namespace BookKeeping.Repository.Implement
 
                         InsertParameter insertParameter = new InsertParameter(InvoiceGroup);
 
-                        MainCount = conn.Execute("Insert_Invoice", insertParameter.AllMainParameters, commandType: CommandType.StoredProcedure);
-                        DetailCount = conn.Execute("Insert_Invoice_Detail", insertParameter.AllDetailParameters, commandType: CommandType.StoredProcedure);
-
-                        if (MainCount > 0 && DetailCount > 0)
-                        {
-                            Transaction.Complete();
-                        }
-                        else
-                        {
-                            return "寫入資料數量錯誤";
-                        }
+                        conn.Execute("Insert_Invoice", insertParameter.AllMainParameters, commandType: CommandType.StoredProcedure);
+                        conn.Execute("Insert_Invoice_Detail", insertParameter.AllDetailParameters, commandType: CommandType.StoredProcedure);
                     }
-                }
-                return null;
+                    Transaction.Complete();
+                    return null;
+                }                
             }
             catch (Exception ex)
             {
@@ -68,13 +58,13 @@ namespace BookKeeping.Repository.Implement
 
                     QueryParameter queryParameter = new QueryParameter(QueryCondition);
                     DynamicParameters parameters = queryParameter.GetParameters();
-                    
+
                     return conn.Query<InvoiceData>("[dbo].[Get_Invoice_Data]", parameters, commandType: CommandType.StoredProcedure).ToList();
                 }
             }
             catch (Exception ex)
-            {                
-                return null;                
+            {
+                return null;
             }
         }
 
@@ -99,8 +89,6 @@ namespace BookKeeping.Repository.Implement
         {
             try
             {
-                int UpdateCount = 0, DeleteDetailCount = 0, InsertDetailCount = 0;
-
                 using (var Transaction = new TransactionScope())
                 {
                     using (var conn = new SqlConnection(_ConnectionString))
@@ -109,20 +97,12 @@ namespace BookKeeping.Repository.Implement
 
                         UpdateParameter updateParameter = new UpdateParameter(invoice);
 
-                        UpdateCount = conn.Execute("Update_Invoice", updateParameter.AllMainParameter, commandType: CommandType.StoredProcedure);
-                        DeleteDetailCount = conn.Execute("Delete_Invoice_Detail_Only", new { ID = invoice.ID }, commandType: CommandType.StoredProcedure);
-                        InsertDetailCount = conn.Execute("Insert_Invoice_Detail", updateParameter.AllDetailParameter, commandType: CommandType.StoredProcedure);
+                        conn.Execute("Update_Invoice", updateParameter.AllMainParameter, commandType: CommandType.StoredProcedure);
+                        conn.Execute("Delete_Invoice_Detail_Only", new { ID = invoice.ID }, commandType: CommandType.StoredProcedure);
+                        conn.Execute("Insert_Invoice_Detail", updateParameter.AllDetailParameter, commandType: CommandType.StoredProcedure);
                     }
-
-                    if (UpdateCount > 0 && DeleteDetailCount > 0 && InsertDetailCount > 0)
-                    {
-                        Transaction.Complete();
-                        return null;
-                    }
-                    else
-                    {
-                        return "更新資料數量錯誤";
-                    }
+                    Transaction.Complete();
+                    return null;
                 }
             }
             catch (Exception ex)
@@ -152,24 +132,16 @@ namespace BookKeeping.Repository.Implement
         {
             try
             {
-                int DeleteCount = 0;
                 using (var Transaction = new TransactionScope())
                 {
                     using (var conn = new SqlConnection(_ConnectionString))
                     {
                         conn.Open();
 
-                        DeleteCount = conn.Execute("Delete_Invoice", new { ID = ID }, commandType: CommandType.StoredProcedure);
+                        conn.Execute("Delete_Invoice", new { ID = ID }, commandType: CommandType.StoredProcedure);
                     }
-                    if (DeleteCount > 0)
-                    {
-                        Transaction.Complete();
-                        return null;
-                    }
-                    else
-                    {
-                        return "刪除資料數量錯誤";
-                    }
+                    Transaction.Complete();
+                    return null;
                 }
             }
             catch (Exception ex)
@@ -177,10 +149,7 @@ namespace BookKeeping.Repository.Implement
                 return ex.ToString();
             }
         }
-
-
     }
-
 }
 
 
