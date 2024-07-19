@@ -11,11 +11,11 @@ namespace BookKeeping.Repository.Implement
 {
     public class QueryParameter
     {
-        private DynamicParameters _ParameterGroup;
+        public DynamicParameters Parameters { get; }
 
         public QueryParameter(InvoiceQueryCondition QueryCondition)
-        {          
-            _ParameterGroup = CreateParameter(QueryCondition);
+        {
+            Parameters = CreateParameter(QueryCondition);
         }
 
         private DynamicParameters CreateParameter(InvoiceQueryCondition QueryCondition)
@@ -30,11 +30,6 @@ namespace BookKeeping.Repository.Implement
             ParameterGroup.Add("@MaxAmount", QueryCondition.MaxAmount, DbType.Int32, ParameterDirection.Input);
 
             return ParameterGroup;
-        }
-
-        public DynamicParameters GetParameters()
-        {
-            return _ParameterGroup;
         }
     }
 }

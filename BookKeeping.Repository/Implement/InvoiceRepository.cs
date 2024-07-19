@@ -56,10 +56,9 @@ namespace BookKeeping.Repository.Implement
                 {
                     conn.Open();
 
-                    QueryParameter queryParameter = new QueryParameter(QueryCondition);
-                    DynamicParameters parameters = queryParameter.GetParameters();
+                    QueryParameter queryParameter = new QueryParameter(QueryCondition);                    
 
-                    return conn.Query<InvoiceData>("[dbo].[Get_Invoice_Data]", parameters, commandType: CommandType.StoredProcedure).ToList();
+                    return conn.Query<InvoiceData>("[dbo].[Get_Invoice_Data]", queryParameter.Parameters, commandType: CommandType.StoredProcedure).ToList();
                 }
             }
             catch (Exception ex)
