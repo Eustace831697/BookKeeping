@@ -11,6 +11,8 @@ using Dapper;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Transactions;
+using BookingKeeping.Common.Implement;
+using BookingKeeping.Common.Interface;
 
 namespace BookKeeping.Repository.Implement
 {
@@ -18,9 +20,12 @@ namespace BookKeeping.Repository.Implement
     {
         private readonly string _ConnectionString;
 
-        public InvoiceRepository(string ConnectionString)
+        private IErrorLog _ErrorLog;
+
+        public InvoiceRepository(string ConnectionString, IErrorLog errorLog=null)
         {
             this._ConnectionString = ConnectionString;
+            this._ErrorLog = errorLog;
         }
 
         public string Insert(List<Invoice> InvoiceGroup)
@@ -40,7 +45,7 @@ namespace BookKeeping.Repository.Implement
                     }
                     Transaction.Complete();
                     return null;
-                }                
+                }
             }
             catch (Exception ex)
             {
@@ -56,13 +61,14 @@ namespace BookKeeping.Repository.Implement
                 {
                     conn.Open();
 
-                    QueryParameter queryParameter = new QueryParameter(QueryCondition);                    
+                    QueryParameter queryParameter = new QueryParameter(QueryCondition);
 
                     return conn.Query<InvoiceData>("[dbo].[Get_Invoice_Data]", queryParameter.Parameters, commandType: CommandType.StoredProcedure).ToList();
                 }
             }
             catch (Exception ex)
             {
+                _ErrorLog.WriterLog(ex.ToString());
                 return null;
             }
         }
@@ -79,7 +85,8 @@ namespace BookKeeping.Repository.Implement
                 }
             }
             catch (Exception ex)
-            {
+            {                
+                _ErrorLog.WriterLog(ex.ToString());
                 return null;
             }
         }
@@ -123,6 +130,9 @@ namespace BookKeeping.Repository.Implement
             }
             catch (Exception ex)
             {
+                string Exception = ex.ToString();
+                _ErrorLog.WriterLog(Exception);
+
                 return null;
             }
         }

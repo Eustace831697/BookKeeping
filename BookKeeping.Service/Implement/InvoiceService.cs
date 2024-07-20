@@ -1,4 +1,5 @@
-﻿using BookKeeping.Repository.Dtos;
+﻿using BookingKeeping.Common.Implement;
+using BookKeeping.Repository.Dtos;
 using BookKeeping.Repository.Implement;
 using BookKeeping.Repository.Interface;
 using BookKeeping.Service.Interface;
@@ -47,7 +48,7 @@ namespace BookKeeping.Service.Implement
 
         // 讀取CSV並回傳資料
         public List<Invoice> ReadCSV(IFormFileCollection files)
-        {            
+        {
             List<Invoice> InvoiceList = new List<Invoice>();
 
             //逐個檔案讀取
@@ -111,7 +112,7 @@ namespace BookKeeping.Service.Implement
             var CategoryList = _invoiceRepository.GetDetailCategoryList();
 
             //將各分類加入下拉選項
-            List<SelectListItem> selectListItems = new List<SelectListItem>();            
+            List<SelectListItem> selectListItems = new List<SelectListItem>();
             foreach (var item in CategoryList)
             {
                 selectListItems.Add(new SelectListItem() { Text = item.Category_Name, Value = item.Category.ToString() });
@@ -126,20 +127,28 @@ namespace BookKeeping.Service.Implement
         /// <returns></returns>
         public List<Invoice> GetAll(InvoiceQueryCondition invoiceQueryCondition)
         {
-            List<InvoiceData> invoiceData = _invoiceRepository.GetAll(invoiceQueryCondition);
+            try
+            {
+                List<InvoiceData> invoiceData = _invoiceRepository.GetAll(invoiceQueryCondition);
 
-            InvoiceDataManager invoiceDataManager = new InvoiceDataManager();
+                InvoiceDataManager invoiceDataManager = new InvoiceDataManager();
 
-            return invoiceDataManager.ConvertToInvoice(invoiceData);
+                return invoiceDataManager.ConvertToInvoice(invoiceData);
+            }
+            catch (Exception ex)
+            {                
+                return null;
+            }
+
         }
-       
+
         public List<Invoice> GetByID(Guid ID)
         {
             List<InvoiceData> invoiceData = _invoiceRepository.GetByID(ID);
 
             InvoiceDataManager invoiceDataManager = new InvoiceDataManager();
 
-            return invoiceDataManager.ConvertToInvoice(invoiceData);            
+            return invoiceDataManager.ConvertToInvoice(invoiceData);
         }
 
         public string Delete(Guid ID)
@@ -147,6 +156,6 @@ namespace BookKeeping.Service.Implement
             return _invoiceRepository.Delete(ID);
         }
 
-        
+
     }
 }

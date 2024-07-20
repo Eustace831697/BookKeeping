@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BookingKeeping.Common\BookingKeeping.Common.csproj" />
     <ProjectReference Include="..\BookKeeping.Service\BookKeeping.Service.csproj" />
   </ItemGroup>
 

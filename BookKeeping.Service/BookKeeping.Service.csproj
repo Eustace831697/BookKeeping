@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BookingKeeping.Common\BookingKeeping.Common.csproj" />
     <ProjectReference Include="..\BookKeeping.Repository\BookKeeping.Repository.csproj" />
   </ItemGroup>
 

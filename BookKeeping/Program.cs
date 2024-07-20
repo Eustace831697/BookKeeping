@@ -1,3 +1,5 @@
+using BookingKeeping.Common.Implement;
+using BookingKeeping.Common.Interface;
 using BookKeeping.Repository.Implement;
 using BookKeeping.Repository.Interface;
 using BookKeeping.Service.Implement;
@@ -13,7 +15,17 @@ builder.Services.AddScoped<IInvoiceRepository>(sp =>
 {
     var configuration = sp.GetRequiredService<IConfiguration>();
     var connectionString = configuration.GetConnectionString("DefaultConnection");
-    return new InvoiceRepository(connectionString);
+    var errorLog = sp.GetRequiredService<IErrorLog>();
+
+    return new InvoiceRepository(connectionString, errorLog);
+});
+
+builder.Services.AddScoped<IErrorLog>(sp =>
+{
+    var configuration = sp.GetRequiredService<IConfiguration>();
+    var ErrorLogPath = configuration.GetValue<string>("ErrorLogPath");
+
+    return new ErrorLog(ErrorLogPath);
 });
 
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
