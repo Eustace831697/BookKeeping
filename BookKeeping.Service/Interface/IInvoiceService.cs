@@ -1,4 +1,5 @@
 ﻿using BookKeeping.Repository.Dtos;
+using BookKeeping.Service.Dtos;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace BookKeeping.Service.Interface
     {  
         string Add(List<Invoice> Invoice);
 
-        List<Invoice> GetAll(InvoiceQueryCondition invoiceQueryCondition);
+        InvoiceResult GetAll(InvoiceQueryCondition invoiceQueryCondition);
 
         List<Invoice> GetByID(Guid ID);
 

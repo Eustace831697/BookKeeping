@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = "GetList";
 }
+
 @model List<BookKeeping.Repository.Dtos.Invoice>
 
 <style>
@@ -34,6 +35,10 @@
         z-index: 1000;
         display: none;
     }
+
+    h1 {
+        display: inline;
+    }
 </style>
 
 <div style="width:100%">
@@ -41,6 +46,14 @@
         <tr>
             <td>
                 <h1>全部列表</h1>
+                &nbsp;
+                <span>每頁顯示</span>
+                <select id="DisplayCount">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="50">50</option>
+                </select>
+                <span>筆</span>
             </td>
             <td style="text-align:right">
                 <input type="button" id="showQueryBtn" class="btn btn-primary" value="查詢" />
@@ -75,17 +88,17 @@
                         <div class="form-group row">
                             <label for="minAmount">總金額</label>
                             <div class="col-md-5">
-                                <input type="number" class="form-control" id="minAmount" name="MinAmount" min="0" value="@ViewBag.QueryCondition.MinAmount">
+                                <input type="number" class="form-control" id="MinAmount" name="MinAmount" min="0" value="@ViewBag.QueryCondition.MinAmount">
                             </div>
                             <div class="col-md-2" style="text-align:center">
                                 ~
                             </div>
                             <div class="col-md-5">
-                                <input type="number" class="form-control" id="maxAmount" name="MaxAmount" min="0" value="@ViewBag.QueryCondition.MaxAmount">
+                                <input type="number" class="form-control" id="MaxAmount" name="MaxAmount" min="0" value="@ViewBag.QueryCondition.MaxAmount">
                             </div>
                         </div>
                         <input type="submit" id="submitQueryBtn" class="btn btn-primary" value="送出" />
-                       @*  <button type="button" id="submitQueryBtn" class="btn btn-primary">送出</button> *@
+                        @*  <button type="button" id="submitQueryBtn" class="btn btn-primary">送出</button> *@
                     </form>
                 </div>
             </td>
@@ -97,83 +110,114 @@
     @{
         for (int i = 0; i < Model.Count; i++)
         {
-            <div class="invoiceContent" style="width:100%;">
-                <hr>
-                <table class="invoice" style="width:100%;text-align:center;">
-                    <tr>
-                        @* 載具名稱、載具號碼 *@
-                        <th>@Html.DisplayNameFor(m => m[i].Carrier_Name)</th>
-                        <td>@Html.DisplayFor(m => m[i].Carrier_Name)</td>
-                        <th>@Html.DisplayNameFor(m => m[i].Carrier_Number)</th>
-                        <td>@Html.DisplayFor(m => m[i].Carrier_Number)</td>
-                    </tr>
+                <div class="invoiceContent" style="width:100%;">
+                    <hr>
+                    <table class="invoice" style="width:100%;text-align:center;">
+                        <tr>
+                            @* 載具名稱、載具號碼 *@
+                            <th>@Html.DisplayNameFor(m => m[i].Carrier_Name)</th>
+                            <td>@Html.DisplayFor(m => m[i].Carrier_Name)</td>
+                            <th>@Html.DisplayNameFor(m => m[i].Carrier_Number)</th>
+                            <td>@Html.DisplayFor(m => m[i].Carrier_Number)</td>
+                        </tr>
 
-                    <tr>
-                        @* 發票號碼、發票日期 *@
-                        <th>@Html.DisplayNameFor(m => m[i].Invoice_Number)</th>
-                        <td>@Html.DisplayFor(m => m[i].Invoice_Number)</td>
-                        <th>@Html.DisplayNameFor(m => m[i].Date)</th>
-                        <td>@Html.DisplayFor(m => m[i].DateFormat)</td>
-                    </tr>
+                        <tr>
+                            @* 發票號碼、發票日期 *@
+                            <th>@Html.DisplayNameFor(m => m[i].Invoice_Number)</th>
+                            <td>@Html.DisplayFor(m => m[i].Invoice_Number)</td>
+                            <th>@Html.DisplayNameFor(m => m[i].Date)</th>
+                            <td>@Html.DisplayFor(m => m[i].DateFormat)</td>
+                        </tr>
 
-                    <tr>
-                        @* 商店店名、商店統編 *@
-                        <th>@Html.DisplayNameFor(m => m[i].Name_of_Seller)</th>
-                        <td>@Html.DisplayFor(m => m[i].Name_of_Seller)</td>
-                        <th>@Html.DisplayNameFor(m => m[i].BAN_of_Seller)</th>
-                        <td>@Html.DisplayFor(m => m[i].BAN_of_Seller)</td>
-                    </tr>
+                        <tr>
+                            @* 商店店名、商店統編 *@
+                            <th>@Html.DisplayNameFor(m => m[i].Name_of_Seller)</th>
+                            <td>@Html.DisplayFor(m => m[i].Name_of_Seller)</td>
+                            <th>@Html.DisplayNameFor(m => m[i].BAN_of_Seller)</th>
+                            <td>@Html.DisplayFor(m => m[i].BAN_of_Seller)</td>
+                        </tr>
 
-                    <tr>
-                        @* 總金額、發票狀態 *@
-                        <th>@Html.DisplayNameFor(m => m[i].Amount)</th>
-                        <td>@Html.DisplayFor(m => m[i].Amount)</td>
-                        <th>@Html.DisplayNameFor(m => m[i].Invoice_Status)</th>
-                        <td>@Html.DisplayFor(m => m[i].Invoice_Status)</td>
-                    </tr>
+                        <tr>
+                            @* 總金額、發票狀態 *@
+                            <th>@Html.DisplayNameFor(m => m[i].Amount)</th>
+                            <td>@Html.DisplayFor(m => m[i].Amount)</td>
+                            <th>@Html.DisplayNameFor(m => m[i].Invoice_Status)</th>
+                            <td>@Html.DisplayFor(m => m[i].Invoice_Status)</td>
+                        </tr>
 
-                    <tr>
-                        @* 發票明細 *@
-                        <th>@Html.DisplayNameFor(m => m[i].InvoiceDetail)</th>
-                        <td colspan="3">
-                            <table class="InvoiceDetail">
-                                @{
+                        <tr>
+                            @* 發票明細 *@
+                            <th>@Html.DisplayNameFor(m => m[i].InvoiceDetail)</th>
+                            <td colspan="3">
+                                <table class="InvoiceDetail">
+                                    @{
                                     if (Model[i].InvoiceDetail.Count > 0)
                                     {
-                                        <tr class="rowTitle">
-                                            <th>@Html.DisplayNameFor(m => m[i].InvoiceDetail[0].Product_Name)</th>
-                                            <th>@Html.DisplayNameFor(m => m[i].InvoiceDetail[0].Price)</th>
-                                            <th>@Html.DisplayNameFor(m => m[i].InvoiceDetail[0].CategoryName)</th>
-                                        </tr>
+                                                <tr class="rowTitle">
+                                                    <th>@Html.DisplayNameFor(m => m[i].InvoiceDetail[0].Product_Name)</th>
+                                                    <th>@Html.DisplayNameFor(m => m[i].InvoiceDetail[0].Price)</th>
+                                                    <th>@Html.DisplayNameFor(m => m[i].InvoiceDetail[0].CategoryName)</th>
+                                                </tr>
 
                                         for (int j = 0; j < Model[i].InvoiceDetail.Count; j++)
                                         {
-                                            <tr class="rowData">
-                                                <td>@Html.DisplayFor(m => m[i].InvoiceDetail[j].Product_Name)</td>
-                                                <td>@Html.DisplayFor(m => m[i].InvoiceDetail[j].Price)</td>
-                                                <td>@Html.DisplayFor(m => m[i].InvoiceDetail[j].CategoryName)</td>
-                                                <td></td>
-                                            </tr>
+                                                    <tr class="rowData">
+                                                        <td>@Html.DisplayFor(m => m[i].InvoiceDetail[j].Product_Name)</td>
+                                                        <td>@Html.DisplayFor(m => m[i].InvoiceDetail[j].Price)</td>
+                                                        <td>@Html.DisplayFor(m => m[i].InvoiceDetail[j].CategoryName)</td>
+                                                        <td></td>
+                                                    </tr>
                                         }
                                     }
-                                }
-                            </table>
-                        </td>
-                    </tr>
-                </table>
+                                    }
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
 
-                <input type="button" class="btn btn-warning" value="更新" onclick="editItem('@Model[i].ID')">
-                <input type="button" class="btn btn-danger" value="刪除" onclick="delItem('@Model[i].ID')">
-            </div>
+                    <input type="button" class="btn btn-warning" value="更新" onclick="editItem('@Model[i].ID')">
+                    <input type="button" class="btn btn-danger" value="刪除" onclick="delItem('@Model[i].ID')">
+                </div>
         }
     }
-
 </div>
 <hr>
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+
+        <li class="page-item">
+            <a class="page-link" id="pre"><</a>
+        </li>
+
+        @{
+            for (int i = 1; i <= ViewBag.PaginationCount; i++)
+            {
+                if (i == ViewBag.QueryCondition.Page)
+                {
+                        <li class="page-item active"><a class="page-link">@i</a></li>
+                }
+                else if (i >= (ViewBag.QueryCondition.Page - 5) && i <= (ViewBag.QueryCondition.Page + 5))
+                {
+                        <li class="page-item"><a class="page-link" onclick="Query(@i)">@i</a></li>
+                }
+            }
+        }
+
+        <li class="page-item">
+            <a class="page-link" id="next" >></a>
+        </li>
+    </ul>
+</nav>
 
 <script>
 
     $(function () {
+        $('#DisplayCount').val(@ViewBag.QueryCondition.DisplayCount);
+
+        $('#DisplayCount').on('change', function () {
+            Query(1);
+        })
+
         $('#showQueryBtn').click(function () {
             var buttonOffset = $(this).offset();
             var buttonWidth = $(this).outerWidth();
@@ -184,6 +228,46 @@
             }).toggle();
         });
     });
+
+    $('#pre').click(function () {
+        let TargetPage = (@ViewBag.QueryCondition.Page-1);
+
+        if (TargetPage > 0){
+            Query(TargetPage);
+        }        
+    })
+
+    $('#next').click(function () {
+        let TargetPage = (@ViewBag.QueryCondition.Page+1);
+
+        if (TargetPage <= @ViewBag.PaginationCount) {
+            Query(TargetPage);
+        }
+    })
+
+    function Query(TargetPage) {
+
+        let Page = @ViewBag.QueryCondition.Page;
+
+        if (TargetPage) {
+            Page = TargetPage;
+        }
+
+        let baseUrl = window.location.origin;
+        let action = '@Url.Action("GetAll")';
+
+        let url = new URL(action, baseUrl);
+        url.searchParams.append('InvoiceNumber', $('#InvoiceNumber').val());
+        url.searchParams.append('ProductName', $('#ProductName').val());
+        url.searchParams.append('StartDate', $('#StartDate').val());
+        url.searchParams.append('EndDate', $('#EndDate').val());
+        url.searchParams.append('MinAmount', $('#MinAmount').val());
+        url.searchParams.append('MaxAmount', $('#MaxAmount').val());
+        url.searchParams.append('DisplayCount', $('#DisplayCount').val());
+        url.searchParams.append('Page', Page);
+
+        location.href = url;
+    }
 
     function editItem(ID) {
         url = '@Url.Action("Edit", "Invoice", new { ID = "_ID" })';

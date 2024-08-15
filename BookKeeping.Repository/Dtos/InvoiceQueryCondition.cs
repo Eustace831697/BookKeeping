@@ -39,9 +39,12 @@ namespace BookKeeping.Repository.Dtos
             }
         }
 
-
         public int? MinAmount { get; set; }
 
         public int? MaxAmount { get; set; }
+
+        public int Page { get; set; } = 1;
+
+        public int DisplayCount { get; set; } = 5;
     }
 }

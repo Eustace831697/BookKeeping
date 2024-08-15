@@ -1,4 +1,5 @@
 ﻿using BookKeeping.Repository.Dtos;
+using BookKeeping.Service.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace BookKeeping.Service.Implement
 {
     public class InvoiceDataManager
-    {
+    {       
         public List<Invoice> ConvertToInvoice(List<InvoiceData> invoiceDataGroup)
         {
             List<InvoiceData> Distinct_MainDataGroup = invoiceDataGroup.GroupBy(x => x.ID).Select(group => group.First()).ToList();

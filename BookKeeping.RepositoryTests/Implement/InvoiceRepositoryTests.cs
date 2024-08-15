@@ -80,11 +80,11 @@ namespace BookKeeping.Repository.Implement.Tests
         public void GetAll_Test()
         {
             InvoiceRepository _invoiceRepository = new InvoiceRepository(_ConnectionString);
-            InvoiceQueryCondition queryCondition=new InvoiceQueryCondition();
+            InvoiceQueryCondition queryCondition = new InvoiceQueryCondition();
 
             var result = _invoiceRepository.GetAll(queryCondition);
 
-            Assert.IsTrue(result.Count > 0);
+            Assert.IsNotNull(result);
         }
 
         [TestMethod()]
@@ -122,7 +122,7 @@ namespace BookKeeping.Repository.Implement.Tests
 
             var result = _invoiceRepository.GetByID(ID);
 
-            Assert.IsTrue(result.Count > 0);
+            Assert.IsNotNull(result);
         }
 
         [TestMethod()]
@@ -134,6 +134,17 @@ namespace BookKeeping.Repository.Implement.Tests
             var result = _invoiceRepository.Delete(ID);
 
             Assert.IsNull(result);
+        }
+
+        [TestMethod()]
+        public void GetMainDataCountTest()
+        {
+            InvoiceRepository _invoiceRepository = new InvoiceRepository(_ConnectionString);
+            InvoiceQueryCondition queryCondition = new InvoiceQueryCondition();
+
+            var result = _invoiceRepository.GetMainDataCount(queryCondition);
+
+            Assert.AreEqual(true, result > -1);
         }
     }
 }

@@ -2,6 +2,7 @@
 using BookKeeping.Repository.Dtos;
 using BookKeeping.Repository.Implement;
 using BookKeeping.Repository.Interface;
+using BookKeeping.Service.Dtos;
 using BookKeeping.Service.Interface;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -101,11 +102,6 @@ namespace BookKeeping.Service.Implement
             return InvoiceList;
         }
 
-        /// <summary>
-        /// 取得發票明細分類
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
         public List<SelectListItem> getCategory()
         {
             //取得分類
@@ -121,25 +117,25 @@ namespace BookKeeping.Service.Implement
             return selectListItems;
         }
 
-        /// <summary>
-        /// 取得資料並加入model
-        /// </summary>
-        /// <returns></returns>
-        public List<Invoice> GetAll(InvoiceQueryCondition invoiceQueryCondition)
+        public InvoiceResult GetAll(InvoiceQueryCondition QueryCondition)
         {
             try
             {
-                List<InvoiceData> invoiceData = _invoiceRepository.GetAll(invoiceQueryCondition);
+                List<InvoiceData> InvoiceDataGroup = _invoiceRepository.GetAll(QueryCondition);
+                int MainDataCount = _invoiceRepository.GetMainDataCount(QueryCondition);
 
                 InvoiceDataManager invoiceDataManager = new InvoiceDataManager();
 
-                return invoiceDataManager.ConvertToInvoice(invoiceData);
+                InvoiceResult invoiceResult = new InvoiceResult();                               
+                invoiceResult.invoiceGroup= invoiceDataManager.ConvertToInvoice(InvoiceDataGroup);
+                invoiceResult.PaginationCount= (int)Math.Ceiling((double)MainDataCount / (double)QueryCondition.DisplayCount);
+
+                return invoiceResult;
             }
             catch (Exception ex)
-            {                
+            {
                 return null;
             }
-
         }
 
         public List<Invoice> GetByID(Guid ID)
@@ -147,7 +143,6 @@ namespace BookKeeping.Service.Implement
             List<InvoiceData> invoiceData = _invoiceRepository.GetByID(ID);
 
             InvoiceDataManager invoiceDataManager = new InvoiceDataManager();
-
             return invoiceDataManager.ConvertToInvoice(invoiceData);
         }
 
@@ -155,7 +150,5 @@ namespace BookKeeping.Service.Implement
         {
             return _invoiceRepository.Delete(ID);
         }
-
-
     }
 }

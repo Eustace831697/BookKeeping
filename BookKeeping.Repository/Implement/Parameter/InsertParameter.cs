@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BookKeeping.Repository.Implement
+namespace BookKeeping.Repository.Implement.Parameter
 {
     public class InsertParameter : IInsertParameter
     {

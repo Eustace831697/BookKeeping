@@ -13,6 +13,7 @@ using System.Runtime.CompilerServices;
 using System.Transactions;
 using BookingKeeping.Common.Implement;
 using BookingKeeping.Common.Interface;
+using BookKeeping.Repository.Implement.Parameter;
 
 namespace BookKeeping.Repository.Implement
 {
@@ -22,7 +23,7 @@ namespace BookKeeping.Repository.Implement
 
         private IErrorLog _ErrorLog;
 
-        public InvoiceRepository(string ConnectionString, IErrorLog errorLog=null)
+        public InvoiceRepository(string ConnectionString, IErrorLog errorLog = null)
         {
             this._ConnectionString = ConnectionString;
             this._ErrorLog = errorLog;
@@ -85,9 +86,29 @@ namespace BookKeeping.Repository.Implement
                 }
             }
             catch (Exception ex)
-            {                
+            {
                 _ErrorLog.WriterLog(ex.ToString());
                 return null;
+            }
+        }
+
+        public int GetMainDataCount(InvoiceQueryCondition QueryCondition)
+        {
+            try
+            {
+                using (var conn = new SqlConnection(_ConnectionString))
+                {
+                    conn.Open();
+
+                    QueryParameter queryParameter = new QueryParameter(QueryCondition);
+
+                    return conn.QueryFirst<int>("[dbo].[Get_Invoice_Pagination_Count]", queryParameter.Parameters, commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                _ErrorLog.WriterLog(ex.ToString());
+                return -1;
             }
         }
 

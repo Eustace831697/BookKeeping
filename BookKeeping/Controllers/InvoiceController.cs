@@ -58,8 +58,11 @@ namespace BookKeeping.Controllers
         [HttpGet("[controller]")]
         public IActionResult GetAll(InvoiceQueryCondition queryCondition)
         {
-            var model = _invoiceService.GetAll(queryCondition);
+            var queryResult = _invoiceService.GetAll(queryCondition);
 
+            List<Invoice> model = queryResult.invoiceGroup;
+
+            ViewBag.PaginationCount = queryResult.PaginationCount;
             ViewBag.QueryCondition = queryCondition;
 
             return View(model);

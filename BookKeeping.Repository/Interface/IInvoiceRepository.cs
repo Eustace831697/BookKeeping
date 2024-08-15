@@ -12,13 +12,13 @@ namespace BookKeeping.Repository.Interface
     {
         
         string Insert(List<Invoice> invoice);
-        
+
         List<InvoiceData> GetAll(InvoiceQueryCondition invoiceQueryCondition);
 
-        //List<InvoiceData> GetAllWithCondition(InvoiceQueryCondition invoiceQueryCondition);
-
         List<InvoiceData> GetByID(Guid ID);
-        
+
+        int GetMainDataCount(InvoiceQueryCondition invoiceQueryCondition);
+
         string Update(Invoice invoice);
 
         string Delete(Guid ID);
