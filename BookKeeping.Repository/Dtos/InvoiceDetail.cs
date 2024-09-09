@@ -14,6 +14,9 @@ namespace BookKeeping.Repository.Dtos
         [DisplayName("主檔GUID")]
         public Guid Invoice_ID { get; set; }
 
+        [DisplayName("發票號碼")]
+        public string Invoice_Name { get; set; }
+
         [DisplayName("品項名稱")]
         public string Product_Name { get; set; }
 
