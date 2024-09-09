@@ -50,56 +50,11 @@ namespace BookKeeping.Service.Implement
         // 讀取CSV並回傳資料
         public List<Invoice> ReadCSV(IFormFileCollection files)
         {
-            List<Invoice> InvoiceList = new List<Invoice>();
+            InvoiceCsvReader invoiceCsvReader = new InvoiceCsvReader();
 
-            //逐個檔案讀取
-            foreach (var file in files)
-            {
-                using (var reader = new StreamReader(file.OpenReadStream()))
-                {
-                    string line;
-                    while ((line = reader.ReadLine()) != null)
-                    {
-                        if (line.ToUpper()[0] == 'M')
-                        {
-                            Invoice invoice = new Invoice();
-                            invoice.InvoiceDetail = new List<InvoiceDetail>();
-                            string[] mainInfo = line.Split('|');    //分割
+            List<Invoice> invoiceList = invoiceCsvReader.ConvertToInvoice(files);
 
-                            invoice.Carrier_Name = mainInfo[1];     //載具名稱
-                            invoice.Carrier_Number = mainInfo[2];   //載具號碼
-                            invoice.Date = DateTime.ParseExact(mainInfo[3], "yyyyMMdd", null);    //載具號碼
-                            invoice.BAN_of_Seller = mainInfo[4];    //商店統編
-                            invoice.Name_of_Seller = mainInfo[5];   //發票號碼
-                            invoice.Invoice_Number = mainInfo[6];   //發票號碼 
-                            invoice.Amount = Convert.ToInt32(mainInfo[7]);  //總金額
-                            invoice.Invoice_Status = mainInfo[8];   //發票狀態
-
-                            //加入發票主檔
-                            InvoiceList.Add(invoice);
-                        }
-                        else if (line.ToUpper()[0] == 'D')
-                        {
-                            InvoiceDetail invoiceDetail = new InvoiceDetail();
-
-                            string[] DetailInfo = line.Split('|');  //分割
-                            string Detail_Invoice_Number = DetailInfo[1];  //發票號碼 識別要塞回哪個主檔
-
-                            invoiceDetail.Price = Convert.ToInt32(DetailInfo[2]);   //小計
-                            invoiceDetail.Product_Name = DetailInfo[3]; //品項名稱
-                            invoiceDetail.Category = invoiceDetail.Price <= 0 ? -1 : 0; //價格負數=折扣(=-1) 其他先未分類(=0)
-
-                            //把這筆明細資料附加至指定發票主檔
-                            var main = InvoiceList.FirstOrDefault(x => (x.Invoice_Number == Detail_Invoice_Number));
-                            if (main != null)
-                            {
-                                main.InvoiceDetail.Add(invoiceDetail);
-                            }
-                        }
-                    }
-                }
-            }
-            return InvoiceList;
+            return invoiceList;
         }
 
         public List<SelectListItem> getCategory()
@@ -126,9 +81,9 @@ namespace BookKeeping.Service.Implement
 
                 InvoiceDataManager invoiceDataManager = new InvoiceDataManager();
 
-                InvoiceResult invoiceResult = new InvoiceResult();                               
-                invoiceResult.invoiceGroup= invoiceDataManager.ConvertToInvoice(InvoiceDataGroup);
-                invoiceResult.PaginationCount= (int)Math.Ceiling((double)MainDataCount / (double)QueryCondition.DisplayCount);
+                InvoiceResult invoiceResult = new InvoiceResult();
+                invoiceResult.invoiceGroup = invoiceDataManager.ConvertToInvoice(InvoiceDataGroup);
+                invoiceResult.PaginationCount = (int)Math.Ceiling((double)MainDataCount / (double)QueryCondition.DisplayCount);
 
                 return invoiceResult;
             }
