@@ -17,38 +17,43 @@ namespace BookKeeping.Service.Implement
 
             foreach (var file in csvFiles)
             {
-                using (var reader = new StreamReader(file.OpenReadStream()))
-                {
-                    string line;
-                    while ((line = reader.ReadLine()) != null)
-                    {
-                        if (line.ToUpper()[0] == 'M')
-                        {                            
-                            Invoice aa = ConvertToMainData(line);
-                            
-                            InvoiceList.Add(aa);    //加入發票主檔
-                        }
-                        else if (line.ToUpper()[0] == 'D')
-                        {
-                            InvoiceDetail invoiceDetail = ConvertToDetailData(line);
-
-                            //把這筆明細資料附加至指定發票主檔
-                            var targetMainData = InvoiceList.FirstOrDefault(x => (x.Invoice_Number == invoiceDetail.Invoice_Name));
-                            if (targetMainData != null)
-                            {
-                                targetMainData.InvoiceDetail.Add(invoiceDetail);
-                            }
-                        }
-                    }
-                }
+                ReadFileAndUpdateInvoiceList(file, InvoiceList);
             }
             return InvoiceList;
         }
 
+        private void ReadFileAndUpdateInvoiceList(IFormFile file, List<Invoice> InvoiceList)
+        {
+            using (var reader = new StreamReader(file.OpenReadStream()))
+            {
+                string? line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    UpdateInvoiceListWithType(line, InvoiceList);
+                }
+            }
+        }
+
+        private void UpdateInvoiceListWithType(string line, List<Invoice> InvoiceList)
+        {
+            char type = line.ToUpper()[0];
+
+            if (type == 'M')
+            {
+                Invoice MainData = ConvertToMainData(line);
+                InvoiceList.Add(MainData);    //加入發票主檔
+            }
+            else if (type == 'D')
+            {
+                InvoiceDetail DetailData = ConvertToDetailData(line);
+                AddDetailDataToTargetMainData(DetailData, InvoiceList); //明細加入至對應發票主檔
+            }
+        }
+
         private Invoice ConvertToMainData(string line)
-        {                       
+        {
             string[] mainInfo = line.Split('|');    //分割
-            
+
             Invoice invoice = new Invoice();
             invoice.Carrier_Name = mainInfo[1];     //載具名稱
             invoice.Carrier_Number = mainInfo[2];   //載具號碼
@@ -65,14 +70,21 @@ namespace BookKeeping.Service.Implement
         private InvoiceDetail ConvertToDetailData(string line)
         {
             string[] DetailInfo = line.Split('|');  //分割
-                                                    //
+
             InvoiceDetail invoiceDetail = new InvoiceDetail();
-            invoiceDetail.Invoice_Name = DetailInfo[1]; //發票號碼 識別要塞回哪個主檔
+            invoiceDetail.Invoice_Name = DetailInfo[1]; //發票號碼
             invoiceDetail.Price = Convert.ToInt32(DetailInfo[2]);   //小計
             invoiceDetail.Product_Name = DetailInfo[3]; //品項名稱
             invoiceDetail.Category = invoiceDetail.Price <= 0 ? -1 : 0; //價格負數=折扣(=-1) 其他先未分類(=0)
 
             return invoiceDetail;
+        }
+
+        private void AddDetailDataToTargetMainData(InvoiceDetail invoiceDetail, List<Invoice> InvoiceList)
+        {
+            var targetMainData = InvoiceList.FirstOrDefault(x => (x.Invoice_Number == invoiceDetail.Invoice_Name));
+
+            if (targetMainData != null) targetMainData.InvoiceDetail.Add(invoiceDetail);
         }
     }
 }

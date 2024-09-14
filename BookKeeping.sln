@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookKeeping.Service", "Book
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookKeeping.RepositoryTests", "BookKeeping.RepositoryTests\BookKeeping.RepositoryTests.csproj", "{67E3F84C-DF51-43F1-8BED-4D01B018187D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookingKeeping.Common", "BookingKeeping.Common\BookingKeeping.Common.csproj", "{A5559D53-4404-49F5-9839-05827673BDD0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookingKeeping.Common", "BookingKeeping.Common\BookingKeeping.Common.csproj", "{A5559D53-4404-49F5-9839-05827673BDD0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{DA3D09DB-7D72-46C0-8523-C055E3041202}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{A5559D53-4404-49F5-9839-05827673BDD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A5559D53-4404-49F5-9839-05827673BDD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A5559D53-4404-49F5-9839-05827673BDD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA3D09DB-7D72-46C0-8523-C055E3041202}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA3D09DB-7D72-46C0-8523-C055E3041202}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA3D09DB-7D72-46C0-8523-C055E3041202}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA3D09DB-7D72-46C0-8523-C055E3041202}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -52,9 +52,7 @@ namespace BookKeeping.Service.Implement
         {
             InvoiceCsvReader invoiceCsvReader = new InvoiceCsvReader();
 
-            List<Invoice> invoiceList = invoiceCsvReader.ConvertToInvoice(files);
-
-            return invoiceList;
+            return invoiceCsvReader.ConvertToInvoice(files);
         }
 
         public List<SelectListItem> getCategory()
